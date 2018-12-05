@@ -55,6 +55,27 @@ def calculate_total_minutes_by_elf(elf_tracker):
 
 
 def main(lines):
+    elf_tracker = build_elf_tracker(lines)
+
+    total_minutes_by_elf = calculate_total_minutes_by_elf(elf_tracker)
+    elves_sorted_by_sleepiness = sorted(
+        total_minutes_by_elf.items(), key=lambda x: x[1], reverse=True
+    )
+    sleepiest_elf_id, sleepiest_elf_minutes = elves_sorted_by_sleepiness[0]
+    print(
+        f'The sleepiest elf is #{sleepiest_elf_id}, who slept for a total of {sleepiest_elf_minutes} minutes'
+    )
+    sleepiest_elfs_log = elf_tracker[sleepiest_elf_id]
+    sleepiest_minute, num_times_slept = sorted(
+        sleepiest_elfs_log.items(), key=lambda x: x[1], reverse=True
+    )[0]
+    print(
+        f"That elf's sleepiest minute was {sleepiest_minute}, which they slept at {num_times_slept} times"
+    )
+    print(f'answer: {int(sleepiest_minute) * int(sleepiest_elf_id)}')
+
+
+def build_elf_tracker(lines):
     elf_tracker = defaultdict(Counter)
     state = State.AWAKE
     for line in lines:
@@ -74,23 +95,7 @@ def main(lines):
                 awake_time = state_change_time
                 update_sleep_times(elf_tracker, current_elf, sleep_time, awake_time)
                 state = State.AWAKE
-
-    total_minutes_by_elf = calculate_total_minutes_by_elf(elf_tracker)
-    elves_sorted_by_sleepiness = sorted(
-        total_minutes_by_elf.items(), key=lambda x: x[1], reverse=True
-    )
-    sleepiest_elf_id, sleepiest_elf_minutes = elves_sorted_by_sleepiness[0]
-    print(
-        f'The sleepiest elf is #{sleepiest_elf_id}, who slept for a total of {sleepiest_elf_minutes} minutes'
-    )
-    sleepiest_elfs_log = elf_tracker[sleepiest_elf_id]
-    sleepiest_minute, num_times_slept = sorted(
-        sleepiest_elfs_log.items(), key=lambda x: x[1], reverse=True
-    )[0]
-    print(
-        f"That elf's sleepiest minute was {sleepiest_minute}, which they slept at {num_times_slept} times"
-    )
-    print(f'answer: {int(sleepiest_minute) * int(sleepiest_elf_id)}')
+    return elf_tracker
 
 
 if __name__ == '__main__':
