@@ -16,6 +16,8 @@ logger.addHandler(StreamHandler(sys.stdout))
 def reduce(text):
     reduced = copy(text)
     done = False
+
+    # TODO: This could be sped up by putting the reduction into a new string...only making one pass through
     while not done:
         for i, char in enumerate(reduced[:-1]):
             if abs(ord(char) - ord(reduced[i + 1])) == 32:
