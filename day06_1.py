@@ -78,14 +78,10 @@ def main(lines):
     coordinates = [
         Point(*[int(g) for g in INPUT_PATTERN.match(line).groups()]) for line in lines
     ]
-    # infinite_coordinate_indexes = find_infinite_coordinate_indexes(coordinates)
     infinite_coordinates = [c for c in find_infinite_coordinates(coordinates) if c]
     logger.info(
         f'found {len(infinite_coordinates)} infinite coordinates out of {len(coordinates)} total'
     )
-    # finite_coordinates = [
-    #     c for i, c in enumerate(coordinates) if i not in infinite_coordinates
-    # ]
 
     area_tracker = Counter()
     max_x = max(c.x for c in coordinates)
