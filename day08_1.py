@@ -1,6 +1,3 @@
-import sys
-
-
 def get_metadata_sum(tree):
     if not tree:
         return 0, ''
