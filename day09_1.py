@@ -78,3 +78,7 @@ def play_marble_game(num_players, last_marble_value):
     winner, highest_score = scores.most_common(1)[0]
 
     return highest_score
+
+
+if __name__ == '__main__':
+    print(play_marble_game(462, 71938))
