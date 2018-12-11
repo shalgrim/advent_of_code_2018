@@ -19,10 +19,10 @@ def calc_cell_power(x, y, serial_number=SERIAL_NUMBER):
     return power_level
 
 
-def calc_all_powers(width, height):
+def calc_all_powers(width, height, serial_number=SERIAL_NUMBER):
     output = []
     for y in range(1, height + 1):
-        output.append([calc_cell_power(x, y) for x in range(1, width + 1)])
+        output.append([calc_cell_power(x, y, serial_number) for x in range(1, width + 1)])
 
     return output
 
