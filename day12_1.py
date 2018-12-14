@@ -18,6 +18,10 @@ def parse_pot_string(line):
     return [True if c == '#' else False for c in line]
 
 
+def lhs_as_binary(five_pots):
+    return int(''.join(['1' if pot else '0' for pot in five_pots]), 2)
+
+
 class State(object):
     def __init__(self, initial_state_line):
         self.pots = parse_pot_string(initial_state_line)
@@ -59,14 +63,19 @@ class Rule(object):
 class RuleSet(object):
     def __init__(self, rules_lines):
         self.rules = [Rule(line) for line in rules_lines]
+        self.rule_dict = {lhs_as_binary(rule.lhs): rule for rule in self.rules}
 
     def find_match(self, pots, pot_index):
         pot_context = pots[pot_index - 2 : pot_index + 3]
+        if not pot_context:
+            return None
+        rule_number = lhs_as_binary(pot_context)
+        return self.rule_dict[rule_number]
 
-        for rule in self.rules:
-            if rule.lhs == pot_context:
-                return rule
-        return None
+        # for rule in self.rules:
+        #     if rule.lhs == pot_context:
+        #         return rule
+        # return None
 
 
 def parse_input(fn):
