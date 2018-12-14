@@ -6,7 +6,7 @@ from logging import StreamHandler
 
 from tqdm import tqdm
 
-logger = logging.getLogger('.day12_1')
+logger = logging.getLogger('advent_of_code.2018.day12_1')
 logging.basicConfig(
     filename='day12_1.log',
     level=logging.INFO,
@@ -59,7 +59,9 @@ class State(object):
         self.zero_index = buffered_zero_index - leftmost_plant_index
 
     def sum_planty_pot_numbers(self):
-        return sum([i - self.zero_index for i, pot in enumerate(self.pots) if pot == '1'])
+        return sum(
+            [i - self.zero_index for i, pot in enumerate(self.pots) if pot == '1']
+        )
 
     def __str__(self):
         return ''.join(['#' if pot == '1' else '.' for pot in self.pots])
@@ -70,6 +72,7 @@ class Rule(object):
         lhs, rhs = [side.strip() for side in rule_line.split('=>')]
         self.lhs = parse_pot_string(lhs)
         self.rhs = '1' if rhs == '#' else '0'
+
 
 class RuleDuck(object):
     def __init__(self):
@@ -91,10 +94,10 @@ class RuleSet(object):
     #     rule_number = lhs_as_binary(pot_context)
     #     return self.rule_dict[rule_number]
 
-        # for rule in self.rules:
-        #     if rule.lhs == pot_context:
-        #         return rule
-        # return None
+    # for rule in self.rules:
+    #     if rule.lhs == pot_context:
+    #         return rule
+    # return None
 
 
 def parse_input(fn):
