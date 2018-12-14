@@ -15,7 +15,7 @@ def score_elves_backwards(string_to_find):
             for location, move in zip(elf_locations, elf_moves)
         ]
 
-    score_index = ''.join([str(score) for score in scores]).index(string_to_find)
+    score_index = string_scores.index(string_to_find)
     return score_index
 
 
