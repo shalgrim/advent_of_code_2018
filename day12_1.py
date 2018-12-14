@@ -1,4 +1,17 @@
+import logging
 import sys
+from logging import StreamHandler
+
+from tqdm import tqdm
+
+logger = logging.getLogger('.day12_1')
+logging.basicConfig(
+    filename='day12_1.log',
+    level=logging.INFO,
+    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
+logger.addHandler(StreamHandler(sys.stdout))
 
 
 def parse_pot_string(line):
@@ -21,11 +34,10 @@ class State(object):
         ]
 
         leftmost_plant_index = new_state_buffered.index(True)
-        rightmost_plant_index = (
-            len(new_state_buffered)
-            - 1
-            - sorted(new_state_buffered, reverse=True).index(True)
-        )
+        rightmost_plant_index = len(new_state_buffered) - 1
+        while not new_state_buffered[rightmost_plant_index]:
+            rightmost_plant_index -= 1
+        logger.debug(f'rightmost_plant_index: {rightmost_plant_index}')
         new_state = new_state_buffered[leftmost_plant_index : rightmost_plant_index + 1]
         self.pots = new_state
         self.zero_index = buffered_zero_index - leftmost_plant_index
@@ -70,12 +82,12 @@ def main(input_file, num_ticks):
     state, rules = parse_input(input_file)
     num_ticks = int(num_ticks)
 
-    for tick in range(num_ticks):
-        print(f'{tick:>2}: {state}')
+    for tick in tqdm(range(num_ticks)):
+        # print(f'{tick:>2}: {state}')
         state.apply_rules(rules)
 
-    print(f'{tick:>2}: {state}')
-    print(f'zero_index: {state.zero_index}')
+    print(f'{tick+1:>2}: {state}')
+    # logger.debug(f'zero_index: {state.zero_index}')
     print(f'sum of pot numbers with plants: {state.sum_planty_pot_numbers()}')
 
 
