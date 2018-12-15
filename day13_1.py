@@ -4,7 +4,7 @@ CRASHED = 'CRASHED'
 TRACK_NORTH_SOUTH = '|'
 TRACK_EAST_WEST = '-'
 TRACK_SLASH = '/'
-TRACK_BACKSLASH = r'\\'
+TRACK_BACKSLASH = '\\'
 TRACK_INTERSECTION = '+'
 CART_WEST = '<'
 CART_EAST = '>'
@@ -37,12 +37,39 @@ class Game(object):
         self.carts = carts
         self.crashes = []
 
-    def tick(self):
-        carts_to_move = sorted(self.carts, key=lambda z: (z.y, z.x))
+    def __str__(self):
+        max_y = max(max(c.y for c in self.carts), max(t[1] for t in self.tracks))
+        max_x = max(max(c.x for c in self.carts), max(t[0] for t in self.tracks))
+
+        lines = []
+        for y in range(max_y + 1):
+            line_chars = []
+            for x in range(max_x + 1):
+                if (x, y) in self.crashes:
+                    line_chars.append('X')
+                else:
+                    carts_here = [c for c in self.carts if c.x == x and c.y == y]
+                    if carts_here:
+                        line_chars.append(carts_here[0].direction)
+                    elif (x, y) in self.tracks:
+                        line_chars.append(self.tracks[x, y].track_type)
+                    else:
+                        line_chars.append(' ')
+            lines.append(''.join(line_chars))
+        return '\n'.join(lines) + '\n\n\n'
+
+    def tick(self, remove_crashed_carts=False):
+        if remove_crashed_carts:
+            carts_to_move = [cart for cart in sorted(self.carts, key=lambda z: (z.y, z.x)) if cart.active]
+        else:
+            carts_to_move = sorted(self.carts, key=lambda z: (z.y, z.x))
 
         for cart in carts_to_move:
             if cart.move(self.tracks, self.carts) == CRASHED:
                 self.crashes.append((cart.x, cart.y))
+                for other_cart in self.carts:
+                    if other_cart.x == cart.x and other_cart.y == cart.y:
+                        other_cart.active = False
 
 
 class Track(object):
@@ -103,7 +130,7 @@ class Cart(object):
         return False
 
     def _intersection_turn(self):
-        if self.intersection_turn == TurnType.LEFT:
+        if self.intersection_turn == TurnType.LEFT.value:
             if self.direction == CART_NORTH:
                 self.direction = CART_WEST
             elif self.direction == CART_WEST:
@@ -112,7 +139,7 @@ class Cart(object):
                 self.direction = CART_EAST
             else:
                 self.direction = CART_NORTH
-        elif self.intersection_turn == TurnType.RIGHT:
+        elif self.intersection_turn == TurnType.RIGHT.value:
             if self.direction == CART_NORTH:
                 self.direction = CART_EAST
             elif self.direction == CART_WEST:
@@ -138,13 +165,24 @@ def parse_input(filename):
                 tracks[(x, y)] = Track(x, y, char)
             elif char in CART_CHARS:
                 carts.append(Cart(x, y, char))
+                tracks[(x, y)] = Track(x, y, track_type_from_cart_char(char))
 
     return Game(tracks, carts)
+
+
+def track_type_from_cart_char(cart_char):
+    if cart_char in '<>':
+        track_type = TRACK_EAST_WEST
+    else:
+        track_type = TRACK_NORTH_SOUTH
+    return track_type
 
 
 def get_first_crash_location(game):
     while not game.crashes:
         game.tick()
+
+    print(game)
 
     return sorted(game.crashes)[0]
 
@@ -156,4 +194,5 @@ def main(filename):
 
 
 if __name__ == '__main__':
-    main('data/input13.txt')
+    answer = main('data/input13.txt')
+    print(answer)
