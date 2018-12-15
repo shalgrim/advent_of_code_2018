@@ -60,7 +60,11 @@ class Game(object):
 
     def tick(self, remove_crashed_carts=False):
         if remove_crashed_carts:
-            carts_to_move = [cart for cart in sorted(self.carts, key=lambda z: (z.y, z.x)) if cart.active]
+            carts_to_move = [
+                cart
+                for cart in sorted(self.carts, key=lambda z: (z.y, z.x))
+                if cart.active
+            ]
         else:
             carts_to_move = sorted(self.carts, key=lambda z: (z.y, z.x))
 
