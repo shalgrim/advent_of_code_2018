@@ -32,7 +32,6 @@ class State(object):
         self.zero_index = 0
 
     def apply_rules(self, rules):
-        # buffered_pots = [False] * 5 + self.pots + [False] * 5
         buffered_pots = '0' * 5 + self.pots + '0' * 5
         buffered_zero_index = self.zero_index + 3
         matching_rules = (
@@ -43,17 +42,12 @@ class State(object):
             ]
             + [None, None]
         )
-        # print(f'len(matching_rules): {len(matching_rules)}')
-        # matching_rules = [
-        #     rules.find_match(buffered_pots, i) for i in range(len(buffered_pots))
-        # ]
         new_state_buffered = ''.join(
             [rule.rhs if rule else '0' for i, rule in enumerate(matching_rules)]
         )
 
         leftmost_plant_index = new_state_buffered.index('1')
         rightmost_plant_index = new_state_buffered.rindex('1')
-        # logger.debug(f'rightmost_plant_index: {rightmost_plant_index}')
         new_state = new_state_buffered[leftmost_plant_index : rightmost_plant_index + 1]
         self.pots = new_state
         self.zero_index = buffered_zero_index - leftmost_plant_index
@@ -87,18 +81,6 @@ class RuleSet(object):
         for rule in self.rules:
             self.rule_dict[rule.lhs] = rule
 
-    # def find_match(self, pots, pot_index):
-    #     pot_context = pots[pot_index - 2 : pot_index + 3]
-    #     if not pot_context:
-    #         return None
-    #     rule_number = lhs_as_binary(pot_context)
-    #     return self.rule_dict[rule_number]
-
-    # for rule in self.rules:
-    #     if rule.lhs == pot_context:
-    #         return rule
-    # return None
-
 
 def parse_input(fn):
     with open(fn) as f:
@@ -112,14 +94,18 @@ def parse_input(fn):
 def main(input_file, num_ticks):
     state, rules = parse_input(input_file)
     num_ticks = int(num_ticks)
+    visited_states = set([f'{state}{state.zero_index}'])
 
     for tick in tqdm(range(num_ticks)):
-        # print(f'{tick:>2}: {state}')
         state.apply_rules(rules)
+        this_state = f'{state}{state.zero_index}'
+        if this_state in visited_states:
+            print(f'we revisited {state} with zero_index {state.zero_index} after tick {tick}')
+        else:
+            visited_states.add(this_state)
 
     print(f'{tick+1:>2}: {state}')
     print(f'zero_index: {state.zero_index}')
-    # logger.debug(f'zero_index: {state.zero_index}')
     print(f'sum of pot numbers with plants: {state.sum_planty_pot_numbers()}')
 
 
