@@ -89,6 +89,7 @@ class Cart(object):
         self.y = y
         self.direction = char
         self.intersection_turn = 0
+        self.active = True
 
     def move(self, tracks, carts):
         if self.direction == CART_NORTH:
