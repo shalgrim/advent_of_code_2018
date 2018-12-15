@@ -15,3 +15,6 @@ class TestScore_elves_backwards(TestCase):
 
     def test_score_elves_2018(self):
         self.assertEqual(score_elves_backwards('59414'), 2018)
+
+    def test_score_elves_2018_2(self):
+        self.assertEqual(score_elves_backwards('5941429882'), 2018)
