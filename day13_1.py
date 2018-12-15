@@ -48,7 +48,7 @@ class Game(object):
                 if (x, y) in self.crashes:
                     line_chars.append('X')
                 else:
-                    carts_here = [c for c in self.carts if c.x == x and c.y == y]
+                    carts_here = [c for c in self.carts if c.active and c.x == x and c.y == y]
                     if carts_here:
                         line_chars.append(carts_here[0].direction)
                     elif (x, y) in self.tracks:
@@ -72,7 +72,7 @@ class Game(object):
             if cart.move(self.tracks, self.carts) == CRASHED:
                 self.crashes.append((cart.x, cart.y))
                 for other_cart in self.carts:
-                    if other_cart.x == cart.x and other_cart.y == cart.y:
+                    if other_cart.active and other_cart.x == cart.x and other_cart.y == cart.y:
                         other_cart.active = False
 
 
@@ -130,7 +130,7 @@ class Cart(object):
             self._intersection_turn()
 
     def detect_crash(self, carts):
-        if any(c for c in carts if c is not self and c.x == self.x and c.y == self.y):
+        if any(c for c in carts if c is not self and c.active and  c.x == self.x and c.y == self.y):
             return True
         return False
 
