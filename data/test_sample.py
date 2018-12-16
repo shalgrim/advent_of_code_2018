@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from data.day16_1 import Sample
-from opcodes import seti, mulr, addi
+from data.day16_1 import Sample, get_possible_opcodes
+from opcodes import addi, mulr, seti
 
 
 class TestSample(TestCase):
@@ -32,3 +32,6 @@ class TestSample(TestCase):
         self.assertTrue(self.sample.test_opcode(addi))
         self.assertTrue(self.sample.test_opcode(mulr))
         self.assertTrue(self.sample.test_opcode(seti))
+
+    def test_get_possible_opcodes(self):
+        self.assertEqual(len(get_possible_opcodes(self.sample)), 3)

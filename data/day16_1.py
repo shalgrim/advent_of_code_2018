@@ -17,6 +17,25 @@ from opcodes import (
     setr,
 )
 
+OPCODES = [
+    addi,
+    addr,
+    bani,
+    banr,
+    bori,
+    borr,
+    eqir,
+    eqri,
+    eqrr,
+    gtir,
+    gtri,
+    gtrr,
+    muli,
+    mulr,
+    seti,
+    setr,
+]
+
 
 class Sample(object):
     def __init__(self, before_registers, instruction, after_registers):
@@ -46,9 +65,8 @@ def parse_input_16_1(filename):
 
 
 def get_possible_opcodes(sample):
-    answer = 0
-
-    return answer
+    answers = [sample.test_opcode(opcode) for opcode in OPCODES]
+    return [a for a in answers if a]
 
 
 def day16_1(filename):
