@@ -22,7 +22,7 @@ def parse_input_16_2(filename):
     samples_end = text.index('\n' * 4)
     program = text[samples_end + 4:]
     program_lines = program.split('\n')
-    instructions = [[int(i) for i in pl.split()] for pl in program_lines]
+    instructions = [[int(i) for i in pl.split()] for pl in program_lines if pl.strip()]
 
     return instructions
 
@@ -35,15 +35,15 @@ def determine_opcode_numbers(samples):
         possible_opcodes[opcode_number].update(get_possible_opcodes(sample))
 
     while any(len(v) > 1 for v in possible_opcodes.values()):
-        determined_opcodes = {v for k, v in possible_opcodes.items() if len(v) == 1}
+        determined_opcodes = {list(v)[0] for k, v in possible_opcodes.items() if len(v) == 1}
 
         for po_set in possible_opcodes.values():
             if len(po_set) == 1:
                 continue
             for do in determined_opcodes:
-                po_set.remove(do)
+                po_set.discard(do)
 
-    return [v.pop() for k, v in sorted(possible_opcodes.items())]
+    return [list(v)[0] for k, v in sorted(possible_opcodes.items())]
 
 
 def run_program(instructions, ordered_opcodes):
