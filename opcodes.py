@@ -1,30 +1,34 @@
 from copy import copy
+from operator import and_, or_
 
 
 def addr(registers, A, B, C):
     output = copy(registers)
+    output[C] = registers[A] + registers[B]
     return output
 
 
 def addi(registers, A, B, C):
     output = copy(registers)
-    output[registers[C]] = registers[A] + B
+    output[C] = registers[A] + B
     return output
 
 
 def mulr(registers, A, B, C):
     output = copy(registers)
-    output[registers[C]] = registers[A] * registers[B]
+    output[C] = registers[A] * registers[B]
     return output
 
 
 def muli(registers, A, B, C):
     output = copy(registers)
+    output[C] = registers[A] * B
     return output
 
 
 def banr(registers, A, B, C):
     output = copy(registers)
+    output[C] = and_(registers[A], registers[B])
     return output
 
 
@@ -50,7 +54,7 @@ def setr(registers, A, B, C):
 
 def seti(registers, A, B, C):
     output = copy(registers)
-    output[registers[C]] = A
+    output[C] = A
     return output
 
 
