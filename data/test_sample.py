@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from data.day16_1 import Sample, get_possible_opcodes
+from day16_1 import Sample, get_possible_opcodes
 from opcodes import addi, mulr, seti
 
 

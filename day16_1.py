@@ -65,8 +65,7 @@ def parse_input_16_1(filename):
 
 
 def get_possible_opcodes(sample):
-    answers = [sample.test_opcode(opcode) for opcode in OPCODES]
-    return [a for a in answers if a]
+    return [opcode for opcode in OPCODES if sample.test_opcode(opcode)]
 
 
 def day16_1(filename):
