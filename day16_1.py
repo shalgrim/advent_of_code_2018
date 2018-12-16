@@ -76,4 +76,4 @@ def day16_1(filename):
 
 
 if __name__ == '__main__':
-    print(day16_1('data/input16.txt'))
+    print(day16_1('input16.txt'))
