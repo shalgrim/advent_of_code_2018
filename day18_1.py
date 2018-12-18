@@ -89,7 +89,12 @@ def create_area_from_file(filename):
 
 def calc_resource_value(filename, minutes, show_maps=True):
     area = create_area_from_file(filename)
-    for _ in tqdm(range(minutes)):
+    seen = set()
+    seen.add(area.acres)
+
+    for i in tqdm(range(minutes)):
+        if i % 10 == 0:
+            print(f'{i:>15d}: {area.value}')
         if show_maps:
             print(f'{area}\n\n\n')
         area.tick()
