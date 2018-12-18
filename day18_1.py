@@ -62,6 +62,8 @@ class Area(object):
         answer = []
         for new_x in range(max(0, x - 1), min(x + 2, self.width)):
             for new_y in range(max(0, y - 1), min(y + 2, self.height)):
+                if x == new_x and y == new_y:
+                    continue
                 answer.append(self.acres[(new_x, new_y)])
         return answer
 
