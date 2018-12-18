@@ -1,5 +1,7 @@
 from copy import copy
 
+from tqdm import tqdm
+
 OPEN_ACRE = '.'
 WOODED_ACRE = '|'
 LUMBERYARD = '#'
@@ -85,10 +87,11 @@ def create_area_from_file(filename):
     )
 
 
-def calc_resource_value(filename, minutes):
+def calc_resource_value(filename, minutes, show_maps=True):
     area = create_area_from_file(filename)
-    for _ in range(minutes):
-        print(f'{area}\n\n\n')
+    for _ in tqdm(range(minutes)):
+        if show_maps:
+            print(f'{area}\n\n\n')
         area.tick()
 
     print(area)
