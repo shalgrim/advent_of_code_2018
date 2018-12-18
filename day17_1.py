@@ -1,5 +1,6 @@
 import logging
 import sys
+from collections import deque
 from itertools import product
 from logging import StreamHandler
 
@@ -12,11 +13,37 @@ logging.basicConfig(
 )
 logger.addHandler(StreamHandler(sys.stdout))
 
+FLOWING = '|'
+RESTING = '~'
+WELL = '+'
+CLAY = '#'
+SAND = '.'
+
+
+class Water(object):
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.below = None
+        self.left = None
+        self.right = None
+        self.state = FLOWING
+
+    def flow(self):
+        """
+        figures out what to do next
+        :return: None
+        """
+        pass
+
 
 class Ground(object):
     def __init__(self, clay_coordinates):
         self.clay_coordinates = clay_coordinates
         self.well_coordinate = (500, 0)
+        self.flowing_coordinates = deque()
+        self.resting_coordinates = []
+        self.water = None
 
     def __str__(self):
         min_x = min(coord[0] for coord in self.clay_coordinates) - 1
@@ -37,11 +64,11 @@ class Ground(object):
         line = ' 0 '
         for x in range(min_x, max_x + 1):
             if (x, 0) == self.well_coordinate:
-                line += '+'
+                line += WELL
             elif (x, 0) in self.clay_coordinates:
-                line += '#'
+                line += CLAY
             else:
-                line += '.'
+                line += SAND
         lines.append(line)
 
         # build ground slice
@@ -59,6 +86,16 @@ class Ground(object):
             )
 
         return '\n'.join(lines)
+
+    @property
+    def wet_squares(self):
+        return len(self.flowing_coordinates) + len(self.resting_coordinates)
+
+    def tick(self):
+        if self.water:
+            self.water.flow()
+        else:
+            self.water = Water(self.well_coordinate[0], self.well_coordinate[1] + 1)
 
 
 def parse_coordinates(raw_coords, reverse):
@@ -95,8 +132,15 @@ def create_ground_slice(filename):
 
 def calc_wettable_squares_from_file(filename):
     ground = create_ground_slice(filename)
-    print(ground)
-    answer = 0
+    wet_squares = -1
+
+    while ground.wet_squares != wet_squares:
+        # print(ground)
+        wet_squares = ground.wet_squares
+        ground.tick()
+
+    # print(ground)
+    answer = ground.wet_squares
     return answer
 
 
