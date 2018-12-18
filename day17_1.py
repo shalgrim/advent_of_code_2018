@@ -47,7 +47,7 @@ class Ground(object):
         # build ground slice
         for y in range(1, max_y + 1):
             lines.append(
-                '{:>2} {}'.format(
+                '{:>4} {}'.format(
                     y,
                     ''.join(
                         [
@@ -101,4 +101,4 @@ def calc_wettable_squares_from_file(filename):
 
 
 if __name__ == '__main__':
-    print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')
+    print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
