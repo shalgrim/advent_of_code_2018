@@ -17,19 +17,22 @@ def parse_input_day19(filename):
 def run_program(instructions, instruction_pointer):
     registers = [instruction_pointer] + [0] * 5
 
-    while registers[0] <= len(instructions):
-        instruction = (
-            registers[0] - 1
-        )  # the first instruction is number one at index zero
+    while registers[0] < len(instructions):
+        instruction = instructions[registers[0]]
         opcode = getattr(opcodes, instruction[0])
-        registers = opcode(registers, *instruction[1:4])
+        output_line = (
+            f'ip={registers[0]} {registers} {" ".join([str(i) for i in instruction])} '
+        )
+        registers = opcode(registers, *instruction[1:])
+        output_line += str(registers)
+        print(output_line)
         registers[0] += 1
 
     return registers
 
 
 def main(filename):
-    instruction_pointer, instructions = parse_input_day19('data/input19.txt')
+    instruction_pointer, instructions = parse_input_day19(filename)
     registers = run_program(instructions, instruction_pointer)
     return registers[0]
 
