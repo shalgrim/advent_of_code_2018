@@ -5,9 +5,9 @@ from logging import StreamHandler
 
 from day19_1 import parse_input_day19
 
-logger = logging.getLogger('advent_of_code.2018.day19_1')
+logger = logging.getLogger('advent_of_code.2018.day19_2')
 logging.basicConfig(
-    filename='day19_1.log',
+    filename='day19_2.log',
     level=logging.INFO,
     format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
