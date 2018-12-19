@@ -1,4 +1,14 @@
 import opcodes
+import logging
+import sys
+from logging import StreamHandler
+
+logger = logging.getLogger('advent_of_code.2018.day19_1')
+logging.basicConfig(filename='day19_1.log',
+                    level=logging.INFO,
+                    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
+                    datefmt="%Y-%m-%d %H:%M:%S")
+# logger.addHandler(StreamHandler(sys.stdout))
 
 
 def parse_input_day19(filename):
@@ -25,7 +35,7 @@ def run_program(instructions, instruction_pointer):
         )
         registers = opcode(registers, *instruction[1:])
         output_line += str(registers)
-        print(output_line)
+        logger.info(output_line)
         registers[0] += 1
 
     return registers
