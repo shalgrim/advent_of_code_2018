@@ -4,10 +4,12 @@ import sys
 from logging import StreamHandler
 
 logger = logging.getLogger('advent_of_code.2018.day19_1')
-logging.basicConfig(filename='day19_1.log',
-                    level=logging.INFO,
-                    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
-                    datefmt="%Y-%m-%d %H:%M:%S")
+logging.basicConfig(
+    filename='day19_1.log',
+    level=logging.INFO,
+    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
 logger.addHandler(StreamHandler(sys.stdout))
 
 
@@ -28,11 +30,9 @@ def run_program(instructions, instruction_pointer):
     registers = [0] * 6
 
     while 0 <= registers[instruction_pointer] < len(instructions):
-        instruction = instructions[instruction_pointer]
+        instruction = instructions[registers[instruction_pointer]]
         opcode = getattr(opcodes, instruction[0])
-        output_line = (
-            f'ip={registers[0]} {registers} {" ".join([str(i) for i in instruction])} '
-        )
+        output_line = f'ip={registers[instruction_pointer]} {registers} {" ".join([str(i) for i in instruction])} '
         registers = opcode(registers, *instruction[1:])
         output_line += str(registers)
         logger.info(output_line)
