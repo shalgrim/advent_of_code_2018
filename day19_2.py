@@ -16,7 +16,7 @@ logger.addHandler(StreamHandler(sys.stdout))
 
 
 def run_program(instructions, instruction_pointer):
-    registers = [0, 1] + [0] * 4
+    registers = [1] + [0] * 5
 
     while 0 <= registers[instruction_pointer] < len(instructions):
         instruction = instructions[registers[instruction_pointer]]
@@ -38,3 +38,4 @@ def main(filename):
 
 if __name__ == '__main__':
     print(main('data/input19.txt'))
+    # 2280 is too low
