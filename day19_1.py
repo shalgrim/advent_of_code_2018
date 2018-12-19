@@ -8,7 +8,7 @@ logging.basicConfig(filename='day19_1.log',
                     level=logging.INFO,
                     format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
                     datefmt="%Y-%m-%d %H:%M:%S")
-# logger.addHandler(StreamHandler(sys.stdout))
+logger.addHandler(StreamHandler(sys.stdout))
 
 
 def parse_input_day19(filename):
@@ -25,10 +25,10 @@ def parse_input_day19(filename):
 
 
 def run_program(instructions, instruction_pointer):
-    registers = [instruction_pointer] + [0] * 5
+    registers = [0] * 6
 
-    while registers[0] < len(instructions):
-        instruction = instructions[registers[0]]
+    while 0 <= registers[instruction_pointer] < len(instructions):
+        instruction = instructions[instruction_pointer]
         opcode = getattr(opcodes, instruction[0])
         output_line = (
             f'ip={registers[0]} {registers} {" ".join([str(i) for i in instruction])} '
@@ -36,7 +36,7 @@ def run_program(instructions, instruction_pointer):
         registers = opcode(registers, *instruction[1:])
         output_line += str(registers)
         logger.info(output_line)
-        registers[0] += 1
+        registers[instruction_pointer] += 1
 
     return registers
 
