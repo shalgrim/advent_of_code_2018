@@ -3,6 +3,8 @@ import logging
 import sys
 from logging import StreamHandler
 
+from day19_1 import parse_input_day19
+
 logger = logging.getLogger('advent_of_code.2018.day19_1')
 logging.basicConfig(
     filename='day19_1.log',
@@ -13,21 +15,8 @@ logging.basicConfig(
 logger.addHandler(StreamHandler(sys.stdout))
 
 
-def parse_input_day19(filename):
-    with open(filename) as f:
-        lines = f.readlines()
-
-    instruction_pointer = int(lines[0].strip().split()[1])
-    instructions = []
-    for line in lines[1:]:
-        opcode = line.split()[0]
-        instructions.append([opcode] + [int(c) for c in line.strip().split()[1:]])
-
-    return instruction_pointer, instructions
-
-
 def run_program(instructions, instruction_pointer):
-    registers = [0] * 6
+    registers = [0, 1] + [0] * 4
 
     while 0 <= registers[instruction_pointer] < len(instructions):
         instruction = instructions[registers[instruction_pointer]]
