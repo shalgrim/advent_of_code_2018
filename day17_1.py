@@ -14,7 +14,7 @@ logging.basicConfig(
 logger.addHandler(StreamHandler(sys.stdout))
 
 FLOWING = '|'
-RESTING = '~'
+STANDING = '~'
 WELL = '+'
 CLAY = '#'
 SAND = '.'
@@ -29,12 +29,18 @@ class Water(object):
         self.right = None
         self.state = FLOWING
 
-    def flow(self):
-        """
-        figures out what to do next
-        :return: None
-        """
-        pass
+    # def flow(self):
+    #     """
+    #     figures out what to do next
+    #     :return: None
+    #     """
+    #     if not self.below and # the line below it isn't clay...the water has to know about its ground...
+    #     if not self.below:
+    #         new_water = Water(self.x, self.y+1)
+    #         self.below = new_water
+    #     elif self.below.state == FLOWING:
+    #
+    #     pass
 
 
 class Ground(object):
@@ -93,9 +99,14 @@ class Ground(object):
 
     def tick(self):
         if self.water:
-            self.water.flow()
+            self.flow()
         else:
             self.water = Water(self.well_coordinate[0], self.well_coordinate[1] + 1)
+
+    def flow(self, water):
+        if not water.lower and (water.x, water.y+1) in self.clay_coordinates:
+            ## look for place to put new water on left then right
+            pass
 
 
 def parse_coordinates(raw_coords, reverse):
