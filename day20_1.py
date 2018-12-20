@@ -92,7 +92,7 @@ def find_furthest_room_helper(regex, start_state=None):
             current_states = list(set(new_current_states))  # make unique
             i = rparen_index
         elif char == '|':
-            assert len(current_states) == 1, 'Unexpected precedence'
+            # assert len(current_states) == 1, 'Unexpected precedence'
             for cs in current_states:
                 end_states[(cs.x, cs.y)] = cs
             current_states = [start_state]
@@ -104,6 +104,7 @@ def find_furthest_room_helper(regex, start_state=None):
 
 
 def find_furthest_room(regex):
+    ALL_STATES.clear()
     output = find_furthest_room_helper(regex)
     end_states_from_furthest_to_nearest = sorted(
         output.values(), key=lambda x: x.distance, reverse=True
