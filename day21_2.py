@@ -39,3 +39,11 @@ def run_program(instructions, instruction_pointer, initial_registers):
 
 if __name__ == '__main__':
     main21_1('data/input21.txt')
+    # 16485525 is too high
+    """
+    so if I'm thinking about this right then left to try is
+    7282971
+    10345242
+    16137946
+    16380319
+    """
