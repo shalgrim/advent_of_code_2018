@@ -21,35 +21,64 @@ SAND = '.'
 
 
 class Water(object):
-    def __init__(self, x, y):
+    def __init__(self, x, y, ground):
         self.x = x
         self.y = y
         self.below = None
         self.left = None
         self.right = None
         self.state = FLOWING
+        ground.flowing_coordinates.add((x, y))
 
-    # def flow(self):
-    #     """
-    #     figures out what to do next
-    #     :return: None
-    #     """
-    #     if not self.below and # the line below it isn't clay...the water has to know about its ground...
-    #     if not self.below:
-    #         new_water = Water(self.x, self.y+1)
-    #         self.below = new_water
-    #     elif self.below.state == FLOWING:
-    #
-    #     pass
+    def flow(self, ground, pressure_from_right=False):
+        """
+        Figure out where to put the next water and what to tell the water behind it to do
+        :param ground:
+        :return: True if we found a place for the new Water, else False
+        """
+        if not self.below and (self.x, self.y+1) not in ground.clay_coordinates:
+            self.below = Water(self.x, self.y+1, ground)
+            return True
+        elif self.below and self.below.state == FLOWING:
+            return self.below.flow(ground)
+        elif not self.left and (self.x-1, self.y) not in ground.clay_coordinates:
+            self.left = Water(self.x-1, self.y, ground)
+            return True
+        elif self.left and self.left.state == FLOWING:
+            return self.left.flow(ground, pressure_from_right=True)
+        elif (self.x-1, self.y) in ground.clay_coordinates and pressure_from_right:
+            self.state = STANDING
+            ground.resting_coordinates.add((self.x, self.y))
+            ground.flowing_coordinates.remove((self.x, self.y))
+            return False
+        elif pressure_from_right:
+            self.state = STANDING
+            return False
+        elif not self.right and (self.x+1, self.y) not in ground.clay_coordinates:
+            self.right = Water(self.x+1, self.y, ground)
+        elif self.right and self.right.state == FLOWING:
+            self.right.flow(ground)
+        else:
+            raise NotImplementedError()
 
 
 class Ground(object):
     def __init__(self, clay_coordinates):
         self.clay_coordinates = clay_coordinates
         self.well_coordinate = (500, 0)
-        self.flowing_coordinates = deque()
-        self.resting_coordinates = []
+        self.flowing_coordinates = set()
+        self.resting_coordinates = set()
         self.water = None
+
+    def gimme_char(self, x, y):
+        if (x, y) in self.resting_coordinates:
+            return '~'
+        elif (x, y) in self.flowing_coordinates:
+            return '|'
+        elif (x, y) in self.clay_coordinates:
+            return '#'
+        else:
+            return '.'
 
     def __str__(self):
         min_x = min(coord[0] for coord in self.clay_coordinates) - 1
@@ -59,15 +88,15 @@ class Ground(object):
 
         # build headers
         lines = [
-            '   {}'.format(''.join([str(x // 100) for x in range(min_x, max_x + 1)])),
-            '   {}'.format(
+            '     {}'.format(''.join([str(x // 100) for x in range(min_x, max_x + 1)])),
+            '     {}'.format(
                 ''.join([str(x // 10 % 10) for x in range(min_x, max_x + 1)])
             ),
-            '   {}'.format(''.join([str(x % 10) for x in range(min_x, max_x + 1)])),
+            '     {}'.format(''.join([str(x % 10) for x in range(min_x, max_x + 1)])),
         ]
 
         # build ground level
-        line = ' 0 '
+        line = '   0 '
         for x in range(min_x, max_x + 1):
             if (x, 0) == self.well_coordinate:
                 line += WELL
@@ -83,8 +112,7 @@ class Ground(object):
                 '{:>4} {}'.format(
                     y,
                     ''.join(
-                        [
-                            '#' if (x, y) in self.clay_coordinates else '.'
+                        [ self.gimme_char(x, y)
                             for x in range(min_x, max_x + 1)
                         ]
                     ),
@@ -97,16 +125,19 @@ class Ground(object):
     def wet_squares(self):
         return len(self.flowing_coordinates) + len(self.resting_coordinates)
 
+    @property
+    def flowing_squares(self):
+        return len(self.flowing_coordinates)
+
+    @property
+    def resting_squares(self):
+        return len(self.resting_coordinates)
+
     def tick(self):
         if self.water:
-            self.flow()
+            self.water.flow(self)
         else:
-            self.water = Water(self.well_coordinate[0], self.well_coordinate[1] + 1)
-
-    def flow(self, water):
-        if not water.lower and (water.x, water.y+1) in self.clay_coordinates:
-            ## look for place to put new water on left then right
-            pass
+            self.water = Water(self.well_coordinate[0], self.well_coordinate[1] + 1, self)
 
 
 def parse_coordinates(raw_coords, reverse):
@@ -144,13 +175,18 @@ def create_ground_slice(filename):
 def calc_wettable_squares_from_file(filename):
     ground = create_ground_slice(filename)
     wet_squares = -1
+    flowing_squares = -1
+    resting_squares = -1
 
-    while ground.wet_squares != wet_squares:
-        # print(ground)
-        wet_squares = ground.wet_squares
-        ground.tick()
-
-    # print(ground)
+    print(ground)
+    while ground.tick():
+    # while ground.flowing_squares != flowing_squares and ground.resting_squares != resting_squares:
+    #     flowing_squares = ground.flowing_coordinates
+    #     resting_squares = ground.resting_coordinates
+        # wet_squares = ground.wet_squares
+        # ground.tick()
+        print(ground)
+    print(ground)
     answer = ground.wet_squares
     return answer
 
