@@ -19,41 +19,22 @@ logger.addHandler(StreamHandler(sys.stdout))
 
 def main21_1(program_filename):
     instruction_pointer, instructions = parse_input_day19(program_filename)
-
-    smallest_count = math.inf
-    smallest_zero_register = None
-
-    for i in range(5):
-        logger.info(f'setting initial_register to {i}')
-        instruction_count = count_instructions(
-            instructions, instruction_pointer, [i, 0, 0, 0, 0, 0], True
-        )
-        if instruction_count < smallest_count:
-            smallest_count = instruction_count
-            smallest_zero_register = i
-
-    print(f'answer: {i}')
+    run_program(instructions, instruction_pointer, [0, 0, 0, 0, 0, 0])
 
 
-def count_instructions(
-    instructions, instruction_pointer, initial_registers, verbose=False
-):
+def run_program(instructions, instruction_pointer, initial_registers):
     registers = copy(initial_registers)
-    instructions_executed = 0
+    largest_reg1 = -math.inf
 
     while 0 <= registers[instruction_pointer] < len(instructions):
         instruction = instructions[registers[instruction_pointer]]
         opcode = getattr(opcodes, instruction[0])
-        if verbose and registers[instruction_pointer] == 28:
-            output_line = f'ip={registers[instruction_pointer]} {registers} {" ".join([str(i) for i in instruction])} '
         registers = opcode(registers, *instruction[1:])
-        instructions_executed += 1
-        if verbose and registers[instruction_pointer] == 28:
-            output_line += str(registers)
-            logger.info(output_line)
+        if registers[instruction_pointer] == 28 and registers[1] > largest_reg1:
+            largest_reg1 = registers[1]
+            print(largest_reg1)
         registers[instruction_pointer] += 1
-
-    return instructions_executed
+    print('ending')
 
 
 if __name__ == '__main__':
