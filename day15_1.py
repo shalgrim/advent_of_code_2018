@@ -1,10 +1,15 @@
 class Monster(object):
-    pass
+    def __init__(self):
+        self.hp = 100
+
+    @property
+    def alive(self):
+        return self.hp > 0
 
 
 class Elf(Monster):
     def __init__(self):
-        self.hp = 200
+        super().__init__()
 
     def __str__(self):
         return f'E({self.hp})'
@@ -12,7 +17,7 @@ class Elf(Monster):
 
 class Goblin(Monster):
     def __init__(self):
-        self.hp = 200
+        super().__init__()
 
     def __str__(self):
         return f'G({self.hp})'
