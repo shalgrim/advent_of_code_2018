@@ -24,26 +24,19 @@ def main21_1(program_filename):
 
 def run_program(instructions, instruction_pointer, initial_registers):
     registers = copy(initial_registers)
-    largest_reg1 = -math.inf
 
     while 0 <= registers[instruction_pointer] < len(instructions):
         instruction = instructions[registers[instruction_pointer]]
         opcode = getattr(opcodes, instruction[0])
         registers = opcode(registers, *instruction[1:])
-        if registers[instruction_pointer] == 28 and registers[1] > largest_reg1:
-            largest_reg1 = registers[1]
-            print(largest_reg1)
+        if registers[instruction_pointer] == 28 and 4682012 < registers[1] < 10345242:
+            print(registers[1])
         registers[instruction_pointer] += 1
     print('ending')
 
 
 if __name__ == '__main__':
     main21_1('data/input21.txt')
+    # 7282971 is incorrect =(
     # 16485525 is too high
-    """
-    so if I'm thinking about this right then left to try is
-    7282971
-    10345242
-    16137946
-    16380319
-    """
+    # 10345242 is too high
