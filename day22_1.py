@@ -62,13 +62,11 @@ def build_cave(target_x, target_y, depth):
     cave = Cave(target_x, target_y, depth)
     max_size = max(target_x, target_y)
     for i in range(max_size + 1):
-        for x in range(min(i, target_x)):
+        for x in range(i):
             cave[(x, i)] = Region(x, i, cave)
-        for y in range(min(i, target_y)):
+        for y in range(i):
             cave[(i, y)] = Region(i, y, cave)
-        cave[(min(i, target_x), min(i, target_y))] = Region(
-            min(i, target_x), min(i, target_y), cave
-        )
+        cave[(i, i)] = Region(i, i, cave)
     return cave
 
 
