@@ -40,4 +40,4 @@ def num_nanobots_within_range_of_strongest(filename):
 
 
 if __name__ == '__main__':
-    print('answer: {num_nanobots_within_range_of_strongest("data/input23.txt")}')
+    print(f'answer: {num_nanobots_within_range_of_strongest("data/input23.txt")}')
