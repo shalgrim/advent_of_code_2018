@@ -1,7 +1,7 @@
 from unittest import TestCase
 
 from day23_1 import num_nanobots_within_range_of_strongest
-from day23_2 import position_in_range_of_most_nanobots
+from day23_2 import position_in_range_of_most_nanobots, distance_to_position_in_range_of_most_nanobots
 
 
 class TestDay23(TestCase):
@@ -15,3 +15,6 @@ class TestDay23(TestCase):
 
     def test_position_in_range_of_most_nanobots(self):
         self.assertEqual(position_in_range_of_most_nanobots('data/test23_2.txt'), (12, 12, 12))
+
+    def test_distance_to_position_in_range_of_most_nanobots(self):
+        self.assertEqual(distance_to_position_in_range_of_most_nanobots('data/test23_2.txt'), 36)
