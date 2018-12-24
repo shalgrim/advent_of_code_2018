@@ -89,6 +89,8 @@ class Army(object):
 
 
 def parse_weak_immune(parenthetical):
+    if not parenthetical:
+        return [], []
     content = parenthetical.strip()[1:-1]
     if content.startswith('weak to '):
         semicolon = content.find(';')
@@ -183,4 +185,5 @@ def day24_1(filename):
 
 
 if __name__ == '__main__':
-    day24_1('data/input24.txt')
+    print(f'answer: {day24_1("data/input24.txt")}')
+    # 9684 is too low
