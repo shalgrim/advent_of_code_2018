@@ -13,6 +13,24 @@ class Nanobot(object):
     def manhattan_distance(self, other):
         return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
 
+    def produce_reachable_points(self):
+        reachables = set()
+        for i in range(self.radius+1):
+            reachables.update(self._produce_reachables(i))
+        return reachables
+
+    def _produce_reachables(self, distance):
+        reachables = set()
+        for z_delta in range(-distance, distance+1):
+            z = self.z + z_delta
+            first_remainder = distance - abs(z_delta)
+            for y_delta in range(-first_remainder, first_remainder+1):
+                y = self.y + y_delta
+                x_delta = first_remainder - abs(y_delta)
+                reachables.add((self.x - x_delta, y, z))
+                reachables.add((self.x + x_delta, y, z))
+        return reachables
+
 
 def parse_input23(filename):
     with open(filename) as f:
