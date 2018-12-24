@@ -160,7 +160,7 @@ def army_target_selection(army1, army2):
             *[
                 g
                 for g in all_groups
-                if g.army is not sg.army and not g.selected_to_be_attacked
+                if g.army is not sg.army and g.number > 0 and not g.selected_to_be_attacked
             ]
         )
 
