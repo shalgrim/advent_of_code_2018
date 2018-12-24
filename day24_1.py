@@ -109,8 +109,8 @@ def parse_weak_immune(parenthetical):
     else:
         raise Exception(f'unexpected input {parenthetical}')
 
-    weaknesses = weak_content.split(',') if weak_content else []
-    immunities = immune_content.split(',') if immune_content else []
+    weaknesses = [wc.strip() for wc in weak_content.split(',')] if weak_content else []
+    immunities = [ic.strip() for ic in immune_content.split(',')] if immune_content else []
     return weaknesses, immunities
 
 
@@ -128,7 +128,7 @@ def parse_input_24(filename):
             damage_type = match.group('damage_type')
             initiative = int(match.group('initiative'))
             weak, immune = parse_weak_immune(match.group('weak_immune'))
-            unit = Unit(hp, damage, damage_type, initiative)
+            unit = Unit(hp, damage, damage_type, initiative, weak, immune)
             army.groups.append(Group(unit, int(match.group('num_units')), army))
         elif line.strip() == 'Immune System:':
             army = Army()
@@ -154,7 +154,7 @@ def army_attack(army1, army2):
 def army_target_selection(army1, army2):
     all_groups = army1.groups + army2.groups
     second_key_sorted = sorted(all_groups, key=lambda x: x.initiative, reverse=True)
-    sorted_groups = sorted(second_key_sorted, key=lambda x: x.effective_power)
+    sorted_groups = sorted(second_key_sorted, key=lambda x: x.effective_power, reverse=True)
     for sg in sorted_groups:
         sg.select_group_to_attack(
             *[
