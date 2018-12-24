@@ -29,17 +29,13 @@ def parse_input23(filename):
 
 
 def nanobots_within_range(nanobot, nanobots):
-    answer = sum(
-        1
-        for n in nanobots
-        if nanobot.manhattan_distance(n) <= nanobot.radius and n is not nanobot
-    )
+    answer = sum(1 for n in nanobots if nanobot.manhattan_distance(n) <= nanobot.radius)
     return answer
 
 
 def num_nanobots_within_range_of_strongest(filename):
     nanobots = parse_input23(filename)
-    strongest_nanobot = sorted(nanobots, key=lambda x: x.radius, desc=True)[0]
+    strongest_nanobot = sorted(nanobots, key=lambda x: x.radius, reverse=True)[0]
     return nanobots_within_range(strongest_nanobot, nanobots)
 
 
