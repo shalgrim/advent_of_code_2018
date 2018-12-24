@@ -1,5 +1,7 @@
 import re
 
+from tqdm import tqdm
+
 LINE_PATT = re.compile(r'^pos=<(.+,.+,.+)>, r=(\d+)\n$')
 
 
@@ -21,7 +23,7 @@ class Nanobot(object):
 
     def _produce_reachables(self, distance):
         reachables = set()
-        for z_delta in range(-distance, distance+1):
+        for z_delta in tqdm(range(-distance, distance+1)):
             z = self.z + z_delta
             first_remainder = distance - abs(z_delta)
             for y_delta in range(-first_remainder, first_remainder+1):

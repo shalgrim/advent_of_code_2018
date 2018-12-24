@@ -27,11 +27,13 @@ def find_position_for_transport(nanobots):
         for point in n.produce_reachable_points():
             point_reachability[point] += 1
 
+    logger.info("getting most common")
     most_common = point_reachability.most_common()
     most_reachable_point_distance = most_common[0][1]
     most_reachable_points = [
         mc[0] for mc in most_common if mc[1] == most_reachable_point_distance
     ]
+    logger.info(f'{len(most_reachable_points)} points tied for most reachable')
 
     closest_to_me = sorted(
         most_reachable_points, key=lambda x: manhattan_distance(x, (0, 0, 0))
@@ -51,4 +53,4 @@ def distance_to_position_in_range_of_most_nanobots(filename):
 
 
 if __name__ == '__main__':
-    print(f'answer: {position_in_range_of_most_nanobots("data/input23.txt")}')
+    print(f'answer: {distance_to_position_in_range_of_most_nanobots("data/input23.txt")}')
