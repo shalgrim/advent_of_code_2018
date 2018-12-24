@@ -14,6 +14,7 @@ class Group(object):
         self.army = army
         self.selected_attack_group = None
         self.selected_to_be_attacked = False
+        self.would_deal = 0
 
     @property
     def effective_power(self):
@@ -41,12 +42,13 @@ class Group(object):
         if group_to_attack:
             self.selected_attack_group = group_to_attack
             group_to_attack.selected_to_be_attacked = True
+            self.would_deal = highest_damage
 
     def attack(self):
         if not self.selected_attack_group:
             return
-        damage = self.calculate_damage(self.selected_attack_group)
-        self.selected_attack_group.deal_damage(damage)
+        # damage = self.calculate_damage(self.selected_attack_group)
+        self.selected_attack_group.deal_damage(self.would_deal)
 
     def deal_damage(self, amount):
         units_to_lose = amount // self.unit.hp
@@ -187,3 +189,5 @@ def day24_1(filename):
 if __name__ == '__main__':
     print(f'answer: {day24_1("data/input24.txt")}')
     # 9684 is too low
+    # my best guess as to how to make this work is to figure out the "would deal" amount and then have it deal that
+    # anyway
