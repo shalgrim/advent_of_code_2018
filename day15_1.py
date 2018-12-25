@@ -242,6 +242,7 @@ class Cave(object):
 
         startx, starty = start_loc
         paths = []
+        found_paths = []
         for point in [
             (startx, starty + 1),
             (startx + 1, starty),
@@ -250,7 +251,9 @@ class Cave(object):
         ]:
             if point in path:
                 continue
-            elif self.is_open_square(*point):
+            elif self.is_open_square(*point) and (
+                not found_paths or depth <= min(len(fp) for fp in found_paths)
+            ):
                 newpath = copy(path)
                 newpath.append(point)
                 found_paths = self.find_all_paths(
