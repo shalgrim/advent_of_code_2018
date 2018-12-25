@@ -14,7 +14,8 @@ def identify_open_squares_in_range_of_targets(cave, targets):
 
 class Monster(object):
     def __init__(self, x, y, cave):
-        self.hp = 100
+        self.hp = 200
+        self.power = 3
         self.x = x
         self.y = y
         self.cave = cave
@@ -37,8 +38,12 @@ class Monster(object):
         all_paths = self.cave.find_all_paths(self.location, target_location)
         sorted_paths = sorted(all_paths, key=lambda x: len(x))
         shortest_distance = len(sorted_paths[0])
-        shortest_paths = [path for path in sorted_paths if len(path) == shortest_distance]
-        sorted_next_steps = sorted([p[0] for p in shortest_paths], key=lambda x: (x[1], x[0]))
+        shortest_paths = [
+            path for path in sorted_paths if len(path) == shortest_distance
+        ]
+        sorted_next_steps = sorted(
+            [p[0] for p in shortest_paths], key=lambda x: (x[1], x[0])
+        )
         next_step = sorted_next_steps[0]
         self.x = next_step[0]
         self.y = next_step[1]
@@ -51,20 +56,54 @@ class Monster(object):
         if not sorted_reachable_squares:
             return
         shortest_distance = sorted_reachable_squares[0][1]
-        closest_reachable_squares = [square[0] for square in sorted_reachable_squares if square[1] == shortest_distance]
-        sorted_closest_squares = sorted(closest_reachable_squares, key=lambda x: (x[1], x[0]))
+        closest_reachable_squares = [
+            square[0]
+            for square in sorted_reachable_squares
+            if square[1] == shortest_distance
+        ]
+        sorted_closest_squares = sorted(
+            closest_reachable_squares, key=lambda x: (x[1], x[0])
+        )
         if not sorted_closest_squares:
             return
         target_square = sorted_closest_squares[0]
         self.move_toward_square(target_square)
 
+    def attack(self):
+        if self.hp <= 0:  # if you died before you got a chance to attack this turn
+            return
+        adjacent_points = [
+            (self.x + 1, self.y),
+            (self.x - 1, self.y),
+            (self.x, self.y + 1),
+            (self.x, self.y - 1),
+        ]
+        if isinstance(self, Elf):
+            attackables = [g for g in self.cave.goblins if g.location in adjacent_points]
+        else:
+            attackables = [e for e in self.cave.elves if e.location in adjacent_points]
+
+        second_key_sorted = sorted(attackables, key=reading_order)
+        sorted_attackables = sorted(second_key_sorted, key=lambda x: x.hp)
+
+        if not sorted_attackables:
+            return
+        to_attack = sorted_attackables[0]
+        to_attack.hp -= self.power
+
+        if to_attack.hp <= 0:
+            pass
+
     def take_turn(self):
+        if self.hp <= 0:  # if you died this round before your turn
+            return
         targets = self.identify_targets()
         squares = identify_open_squares_in_range_of_targets(self.cave, targets)
         if (self.x, self.y) in squares:
             pass  # don't move, you're already next to target
         else:
             self.move(squares)
+        self.attack()
 
 
 class Elf(Monster):
@@ -97,14 +136,19 @@ class Cave(object):
     def is_open_square(self, x, y):
         if (x, y) not in self.floors:
             return False
-        if any([m.location ==(x, y) for m in self.goblins + self.elves]):
+        if any([m.location == (x, y) and m.hp > 0 for m in self.goblins + self.elves]):
             return False
         return True
 
     def tick(self):
         monsters = sorted(self.elves + self.goblins, key=reading_order)
         for monster in monsters:
-            monster.take_turn()
+            if monster.hp > 0:  # check to see if they died before their turn
+                monster.take_turn()
+
+        # clear out monsters that have died
+        self.goblins = [g for g in self.goblins if g.hp > 0]
+        self.elves = [e for e in self.elves if e.hp > 0]
 
     def __str__(self):
         max_y = max(w[1] for w in self.walls)
@@ -116,9 +160,9 @@ class Cave(object):
             for x in range(max_x + 1):
                 if (x, y) in self.walls:
                     line_chars.append('#')
-                elif (x, y) in self.elves:
+                elif (x, y) in [e.location for e in self.elves if e.hp > 0]:
                     line_chars.append('E')
-                elif (x, y) in self.goblins:
+                elif (x, y) in [g.location for g in self.goblins if g.hp > 0]:
                     line_chars.append('G')
                 else:
                     line_chars.append('.')
@@ -149,7 +193,9 @@ class Cave(object):
             (start_loc[0] - 1, start_loc[1]),
         ]:
             if self.is_open_square(*point):
-                visited = self.determine_all_reachable_squares(point, num_steps + 1, visited)
+                visited = self.determine_all_reachable_squares(
+                    point, num_steps + 1, visited
+                )
 
         return visited
 
@@ -173,7 +219,12 @@ class Cave(object):
 
         startx, starty = start_loc
         paths = []
-        for point in [(startx, starty+1), (startx+1, starty), (startx, starty-1), (startx-1, starty)]:
+        for point in [
+            (startx, starty + 1),
+            (startx + 1, starty),
+            (startx, starty - 1),
+            (startx - 1, starty),
+        ]:
             if point in path:
                 continue
             elif self.is_open_square(*point):
@@ -208,7 +259,10 @@ def parse_cave_input(filename):
 
 
 def calculate_cave_outcome(cave, completed_rounds):
-    pass
+    winning_team = cave.goblins if any(g.hp > 0 for g in cave.goblins) else cave.elves
+    remaining_hp = sum(wt.hp for wt in winning_team)
+    answer = remaining_hp * completed_rounds
+    return answer
 
 
 def run_cave_game(cave):
