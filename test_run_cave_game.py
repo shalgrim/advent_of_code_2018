@@ -15,4 +15,4 @@ class TestRun_cave_game(TestCase):
         elf = my_cave.elves[0]
         self.assertEqual(elf.location, (1, 1))
         my_cave.tick()
-        self.assertEqual(elf.location(2, 1))
+        self.assertEqual(elf.location, (2, 1))

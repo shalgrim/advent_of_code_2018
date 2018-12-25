@@ -28,14 +28,17 @@ class Monster(object):
         return self.x, self.y
 
     def identify_targets(self):
-        return [m for m in self.cave.monsters if not isinstance(m, type(self))]
+        if isinstance(self, Elf):
+            return self.cave.goblins
+        else:
+            return self.cave.elves
 
     def move_toward_square(self, target_location):
         all_paths = self.cave.find_all_paths(self.location, target_location)
         sorted_paths = sorted(all_paths, key=lambda x: len(x))
-        shortest_distance = len(sorted_paths)[0]
+        shortest_distance = len(sorted_paths[0])
         shortest_paths = [path for path in sorted_paths if len(path) == shortest_distance]
-        sorted_next_steps = sorted([p[0] for p in shortest_paths], key=reading_order)
+        sorted_next_steps = sorted([p[0] for p in shortest_paths], key=lambda x: (x[1], x[0]))
         next_step = sorted_next_steps[0]
         self.x = next_step[0]
         self.y = next_step[1]
@@ -45,13 +48,15 @@ class Monster(object):
             (self.x, self.y), squares
         )
         sorted_reachable_squares = sorted(reachable_squares.items(), key=lambda x: x[1])
-        shortest_distance = sorted_reachable_squares[0][1]
-        closest_reachable_squares = [square for square in sorted_reachable_squares if square[1] == shortest_distance]
-        sorted_closest_squares = sorted(closest_reachable_squares, key=reading_order)
         if not sorted_reachable_squares:
             return
-        target_square = sorted_reachable_squares[0]
-        self.move_toward_square(target_square[0])
+        shortest_distance = sorted_reachable_squares[0][1]
+        closest_reachable_squares = [square[0] for square in sorted_reachable_squares if square[1] == shortest_distance]
+        sorted_closest_squares = sorted(closest_reachable_squares, key=lambda x: (x[1], x[0]))
+        if not sorted_closest_squares:
+            return
+        target_square = sorted_closest_squares[0]
+        self.move_toward_square(target_square)
 
     def take_turn(self):
         targets = self.identify_targets()
@@ -64,7 +69,7 @@ class Monster(object):
 
 class Elf(Monster):
     def __init__(self, x, y, cave):
-        super().__init__(x, y)
+        super().__init__(x, y, cave)
 
     def __str__(self):
         return f'E({self.hp})'
@@ -72,7 +77,7 @@ class Elf(Monster):
 
 class Goblin(Monster):
     def __init__(self, x, y, cave):
-        super().__init__(x, y)
+        super().__init__(x, y, cave)
 
     def __str__(self):
         return f'G({self.hp})'
@@ -92,14 +97,12 @@ class Cave(object):
     def is_open_square(self, x, y):
         if (x, y) not in self.floors:
             return False
-        if any([g.x == x and g.y == y for g in self.goblins]):
-            return False
-        if any([e.x == x and e.y == y for e in self.elves]):
+        if any([m.location ==(x, y) for m in self.goblins + self.elves]):
             return False
         return True
 
     def tick(self):
-        monsters = sorted(self.monsters, key=reading_order)
+        monsters = sorted(self.elves + self.goblins, key=reading_order)
         for monster in monsters:
             monster.take_turn()
 
@@ -140,10 +143,10 @@ class Cave(object):
             visited = {start_loc: num_steps}
 
         for point in [
-            (start_loc.x, start_loc.y + 1),
-            (start_loc.x + 1, start_loc.y),
-            (start_loc.x, start_loc.y - 1),
-            (start_loc.x - 1, start_loc.y),
+            (start_loc[0], start_loc[1] + 1),
+            (start_loc[0] + 1, start_loc[1]),
+            (start_loc[0], start_loc[1] - 1),
+            (start_loc[0] - 1, start_loc[1]),
         ]:
             if self.is_open_square(*point):
                 visited = self.determine_all_reachable_squares(point, num_steps + 1, visited)
@@ -166,17 +169,18 @@ class Cave(object):
             path = []
 
         if start_loc == target_loc:
-            return path
+            return [path]
 
         startx, starty = start_loc
         paths = []
         for point in [(startx, starty+1), (startx+1, starty), (startx, starty-1), (startx-1, starty)]:
             if point in path:
                 continue
-            elif self.is_open_square(point):
+            elif self.is_open_square(*point):
                 newpath = copy(path)
                 newpath.append(point)
-                paths += self.find_all_paths(point, target_loc, path)
+                found_paths = self.find_all_paths(point, target_loc, newpath)
+                paths += found_paths
             else:
                 continue
         return paths
@@ -195,10 +199,10 @@ def parse_cave_input(filename):
                 cave.floors.add((x, y))
             elif char == 'G':
                 cave.floors.add((x, y))
-                cave.goblins.append(Goblin(x, y))
+                cave.goblins.append(Goblin(x, y, cave))
             elif char == 'E':
                 cave.floors.add((x, y))
-                cave.elves.append(Elf(x, y))
+                cave.elves.append(Elf(x, y, cave))
 
     return cave
 
