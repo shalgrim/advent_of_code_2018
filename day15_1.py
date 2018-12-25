@@ -270,13 +270,13 @@ def calculate_cave_outcome(cave, completed_rounds):
 
 
 def run_cave_game(cave):
-    completed_rounds = 0
+    completed_rounds = -1
     while any(elf.alive for elf in cave.elves) and any(
         goblin.alive for goblin in cave.goblins
     ):
+        completed_rounds += 1
         print(cave)
         cave.tick()
-        completed_rounds += 1
     print(cave)
 
     return calculate_cave_outcome(cave, completed_rounds)
