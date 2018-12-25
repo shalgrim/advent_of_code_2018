@@ -1,13 +1,15 @@
 from copy import copy
 
 
-def identify_open_squares_in_range_of_targets(cave, targets):
+def identify_open_squares_in_range_of_targets(cave, targets, who_wants_to_know=None):
     open_squares_adjacent_to_targets = set()
     for target in targets:
         tx, ty = target.location
         squares_to_check = [(tx + 1, ty), (tx - 1, ty), (tx, ty + 1), (tx, ty - 1)]
         for square in squares_to_check:
-            if cave.is_open_square(*square):
+            if cave.is_open_square(*square) or (
+                who_wants_to_know and who_wants_to_know.location == square
+            ):
                 open_squares_adjacent_to_targets.add(square)
     return open_squares_adjacent_to_targets
 
@@ -79,7 +81,9 @@ class Monster(object):
             (self.x, self.y - 1),
         ]
         if isinstance(self, Elf):
-            attackables = [g for g in self.cave.goblins if g.location in adjacent_points]
+            attackables = [
+                g for g in self.cave.goblins if g.location in adjacent_points
+            ]
         else:
             attackables = [e for e in self.cave.elves if e.location in adjacent_points]
 
@@ -98,7 +102,7 @@ class Monster(object):
         if self.hp <= 0:  # if you died this round before your turn
             return
         targets = self.identify_targets()
-        squares = identify_open_squares_in_range_of_targets(self.cave, targets)
+        squares = identify_open_squares_in_range_of_targets(self.cave, targets, self)
         if (self.x, self.y) in squares:
             pass  # don't move, you're already next to target
         else:
@@ -273,6 +277,7 @@ def run_cave_game(cave):
         print(cave)
         cave.tick()
         completed_rounds += 1
+    print(cave)
 
     return calculate_cave_outcome(cave, completed_rounds)
 
