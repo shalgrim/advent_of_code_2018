@@ -225,9 +225,17 @@ class Cave(object):
         answer = {k: v for k, v in all_reachable_squares.items() if k in squares}
         return answer
 
-    def find_all_paths(self, start_loc, target_loc, path=None):
+    def find_all_paths(self, start_loc, target_loc, depth=0, path=None, visited=None):
         if not path:
             path = []
+
+        if not visited:
+            visited = {}
+
+        if start_loc in visited and visited[start_loc] < depth:
+            return []
+        else:
+            visited[start_loc] = depth
 
         if start_loc == target_loc:
             return [path]
@@ -245,7 +253,9 @@ class Cave(object):
             elif self.is_open_square(*point):
                 newpath = copy(path)
                 newpath.append(point)
-                found_paths = self.find_all_paths(point, target_loc, newpath)
+                found_paths = self.find_all_paths(
+                    point, target_loc, depth + 1, newpath, visited
+                )
                 paths += found_paths
             else:
                 continue
