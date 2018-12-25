@@ -82,10 +82,14 @@ class Monster(object):
         ]
         if isinstance(self, Elf):
             attackables = [
-                g for g in self.cave.goblins if g.location in adjacent_points
+                g
+                for g in self.cave.goblins
+                if g.location in adjacent_points and g.hp > 0
             ]
         else:
-            attackables = [e for e in self.cave.elves if e.location in adjacent_points]
+            attackables = [
+                e for e in self.cave.elves if e.location in adjacent_points and e.hp > 0
+            ]
 
         second_key_sorted = sorted(attackables, key=reading_order)
         sorted_attackables = sorted(second_key_sorted, key=lambda x: x.hp)
