@@ -11,23 +11,23 @@ class TestRun_cave_game(TestCase):
 
     def test_run_cave_game_2(self):
         cave = parse_cave_input('data/test15_2.txt')
-        self.assertEqual(run_cave_game(cave), 27730)
+        self.assertEqual(run_cave_game(cave), 36334)
 
     def test_run_cave_game_3(self):
         cave = parse_cave_input('data/test15_3.txt')
-        self.assertEqual(run_cave_game(cave), 27730)
+        self.assertEqual(run_cave_game(cave), 39514)
 
     def test_run_cave_game_4(self):
         cave = parse_cave_input('data/test15_4.txt')
-        self.assertEqual(run_cave_game(cave), 27730)
+        self.assertEqual(run_cave_game(cave), 27755)
 
     def test_run_cave_game_5(self):
         cave = parse_cave_input('data/test15_5.txt')
-        self.assertEqual(run_cave_game(cave), 27730)
+        self.assertEqual(run_cave_game(cave), 28944)
 
     def test_run_cave_game_6(self):
         cave = parse_cave_input('data/test15_6.txt')
-        self.assertEqual(run_cave_game(cave), 27730)
+        self.assertEqual(run_cave_game(cave), 18740)
 
     def test_monster_move(self):
         my_cave = parse_cave_input('data/test15_move.txt')
