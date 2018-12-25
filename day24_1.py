@@ -1,4 +1,16 @@
 import re
+import logging
+import sys
+from logging import StreamHandler
+
+logger = logging.getLogger('adventofcode.2018.day24_1')
+logging.basicConfig(
+    filename='day24_1.log',
+    level=logging.INFO,
+    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
+logger.addHandler(StreamHandler(sys.stdout))
 
 UNIT_LINE = (
     r'^(?P<num_units>\d+) units each with (?P<hit_points>\d+) hit points (?P<weak_immune>\(.+\) )?with an attack '
@@ -34,6 +46,7 @@ class Group(object):
 
         for group in groups:
             damage = self.calculate_damage(group)
+            logger.info(f'this group would deal defending group {damage} damage')
             if damage > highest_damage:
                 highest_damage = damage
                 group_to_attack = group
@@ -50,6 +63,10 @@ class Group(object):
 
     def deal_damage(self, amount):
         units_to_lose = amount // self.unit.hp
+        logger.info(
+            f'a group attacks this group, dealing {amount} damage and '
+            f'killing {min(units_to_lose, self.number)} units'
+        )
         self.number = max(0, self.number - units_to_lose)
 
     @property
@@ -112,7 +129,9 @@ def parse_weak_immune(parenthetical):
         raise Exception(f'unexpected input {parenthetical}')
 
     weaknesses = [wc.strip() for wc in weak_content.split(',')] if weak_content else []
-    immunities = [ic.strip() for ic in immune_content.split(',')] if immune_content else []
+    immunities = (
+        [ic.strip() for ic in immune_content.split(',')] if immune_content else []
+    )
     return weaknesses, immunities
 
 
@@ -156,13 +175,17 @@ def army_attack(army1, army2):
 def army_target_selection(army1, army2):
     all_groups = army1.groups + army2.groups
     second_key_sorted = sorted(all_groups, key=lambda x: x.initiative, reverse=True)
-    sorted_groups = sorted(second_key_sorted, key=lambda x: x.effective_power, reverse=True)
+    sorted_groups = sorted(
+        second_key_sorted, key=lambda x: x.effective_power, reverse=True
+    )
     for sg in sorted_groups:
         sg.select_group_to_attack(
             *[
                 g
                 for g in all_groups
-                if g.army is not sg.army and g.number > 0 and not g.selected_to_be_attacked
+                if g.army is not sg.army
+                and g.number > 0
+                and not g.selected_to_be_attacked
             ]
         )
 
