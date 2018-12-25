@@ -69,7 +69,7 @@ class Game(object):
             carts_to_move = sorted(self.carts, key=lambda z: (z.y, z.x))
 
         for cart in carts_to_move:
-            if cart.move(self.tracks, self.carts) == CRASHED:
+            if cart.take_turn(self.tracks, self.carts) == CRASHED:
                 self.crashes.append((cart.x, cart.y))
                 for other_cart in self.carts:
                     if other_cart.active and other_cart.x == cart.x and other_cart.y == cart.y:
