@@ -32,9 +32,9 @@ class Monster(object):
 
     def identify_targets(self):
         if isinstance(self, Elf):
-            return self.cave.goblins
+            return [g for g in self.cave.goblins if g.hp > 0]
         else:
-            return self.cave.elves
+            return [e for e in self.cave.elves if e.hp > 0]
 
     def move_toward_square(self, target_location):
         all_paths = self.cave.find_all_paths(self.location, target_location)
@@ -100,14 +100,17 @@ class Monster(object):
 
     def take_turn(self):
         if self.hp <= 0:  # if you died this round before your turn
-            return
+            return True
         targets = self.identify_targets()
+        if not targets:
+            return False
         squares = identify_open_squares_in_range_of_targets(self.cave, targets, self)
         if (self.x, self.y) in squares:
             pass  # don't move, you're already next to target
         else:
             self.move(squares)
         self.attack()
+        return True
 
 
 class Elf(Monster):
@@ -146,13 +149,17 @@ class Cave(object):
 
     def tick(self):
         monsters = sorted(self.elves + self.goblins, key=reading_order)
+        complete_turn = True
         for monster in monsters:
             if monster.hp > 0:  # check to see if they died before their turn
-                monster.take_turn()
+                had_targets = monster.take_turn()
+                if not had_targets:
+                    complete_turn = False
 
         # clear out monsters that have died
         self.goblins = [g for g in self.goblins if g.hp > 0]
         self.elves = [e for e in self.elves if e.hp > 0]
+        return complete_turn
 
     def __str__(self):
         max_y = max(w[1] for w in self.walls)
@@ -270,13 +277,17 @@ def calculate_cave_outcome(cave, completed_rounds):
 
 
 def run_cave_game(cave):
-    completed_rounds = -1
+    completed_rounds = 0
     while any(elf.alive for elf in cave.elves) and any(
         goblin.alive for goblin in cave.goblins
     ):
-        completed_rounds += 1
+        print(f'After {completed_rounds} rounds:')
         print(cave)
-        cave.tick()
+        completed = cave.tick()
+        if completed:
+            completed_rounds += 1
+
+    print(f'After {completed_rounds} rounds:')
     print(cave)
 
     return calculate_cave_outcome(cave, completed_rounds)
