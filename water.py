@@ -44,6 +44,8 @@ class Water(object):
                     if left_result == right_result == CLAY:
                         self._stand()
                         return STANDING
+                else:
+                    return right_result
             else:
                 return left_result
 
@@ -73,12 +75,11 @@ class Water(object):
         if right_char == CLAY:
             return right_char
         elif right_char == STANDING:
-            self.ground.standing_squares.add((self.x, self.y))
-            self.ground.flowing_squares.remove((self.x, self.y))
+            self._stand()
         else:
             assert right_char == SAND, 'bad assumption about right char'
             self.right = Water(self.x + 1, self.y, self.ground, self)
-            self.right.flow()
+            return self.right.flow()
 
     def _stand(self):
         self.ground.standing_coordinates.add((self.x, self.y))
@@ -86,3 +87,5 @@ class Water(object):
         print(self.ground)
         if self.left and self.left is not self.parent:
             self.left._stand()
+        if self.right and self.right is not self.parent:
+            self.right._stand()
