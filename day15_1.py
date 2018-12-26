@@ -356,11 +356,20 @@ def calculate_cave_outcome(cave, completed_rounds):
     return answer
 
 
-def run_cave_game(cave):
+def run_cave_game(cave, **kwargs):
     completed_rounds = 0
+    num_elves = len(cave.elves)
     while any(elf.alive for elf in cave.elves) and any(
         goblin.alive for goblin in cave.goblins
     ):
+        if (
+            'abort_on_elf_death' in kwargs
+            and kwargs['abort_on_elf_death']
+            and len(cave.elves) != num_elves
+        ):
+            print('elf died, aborting')
+            return -1
+
         print(f'After {completed_rounds} rounds:')
         print(cave)
         completed = cave.tick()
