@@ -243,12 +243,7 @@ class Cave(object):
         startx, starty = start_loc
         paths = []
         found_paths = []
-        for point in [
-            (startx, starty + 1),
-            (startx + 1, starty),
-            (startx, starty - 1),
-            (startx - 1, starty),
-        ]:
+        for point in generate_potential_next_steps(start_loc, target_loc):
             if point in path:
                 continue
             elif self.is_open_square(*point) and (
@@ -263,6 +258,51 @@ class Cave(object):
             else:
                 continue
         return paths
+
+
+def generate_potential_next_steps(start_loc, end_loc):
+    if start_loc == end_loc:
+        return []
+    x_direction = (
+        0
+        if start_loc[0] == end_loc[0]
+        else (end_loc[0] - start_loc[0]) / abs(end_loc[0] - start_loc[0])
+    )
+    y_direction = (
+        0
+        if start_loc[1] == end_loc[1]
+        else (end_loc[1] - start_loc[1]) / abs(end_loc[1] - start_loc[1])
+    )
+    if x_direction == 0:
+        next_steps = [
+            (start_loc[0], start_loc[1] + y_direction),
+            (start_loc[0], start_loc[1] - y_direction),
+            (start_loc[0] + 1, start_loc[1]),
+            (start_loc[0] - 1, start_loc[1]),
+        ]
+    elif y_direction == 0:
+        next_steps = [
+            (start_loc[0] + x_direction, start_loc[1]),
+            (start_loc[0] - x_direction, start_loc[1]),
+            (start_loc[0], start_loc[1] + 1),
+            (start_loc[0], start_loc[1] - 1),
+        ]
+    elif abs(end_loc[0] - start_loc[0]) < abs(end_loc[1] - end_loc[1]):
+        next_steps = [
+            (start_loc[0] + x_direction, start_loc[1]),
+            (start_loc[0] - x_direction, start_loc[1]),
+            (start_loc[0], start_loc[1] + y_direction),
+            (start_loc[0], start_loc[1] - y_direction),
+        ]
+    else:
+        next_steps = [
+            (start_loc[0], start_loc[1] + y_direction),
+            (start_loc[0], start_loc[1] - y_direction),
+            (start_loc[0] + x_direction, start_loc[1]),
+            (start_loc[0] - x_direction, start_loc[1]),
+        ]
+
+    return next_steps
 
 
 def parse_cave_input(filename):
