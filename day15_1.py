@@ -36,31 +36,50 @@ class Monster(object):
         else:
             return [e for e in self.cave.elves if e.hp > 0]
 
-    def move_toward_square(self, target_location):
-        all_paths = self.cave.find_all_paths(self.location, target_location)
-        sorted_paths = sorted(all_paths, key=lambda x: len(x))
-        shortest_distance = len(sorted_paths[0])
-        shortest_paths = [
-            path for path in sorted_paths if len(path) == shortest_distance
+    def move_toward_square(
+        self, target_location, shortest_distance, all_reachable_squares
+    ):
+        """
+        Take a step on the shortest path toward target_location
+        :param target_location: location you want to get to
+        :param shortest_distance: known shortest path from here to target_location
+        :param all_reachable_squares: map of every reachable square in map and shortest distance to it
+        :return: None
+        """
+        points_to_try = [
+            (self.x, self.y - 1),
+            (self.x - 1, self.y),
+            (self.x + 1, self.y),
+            (self.x, self.y + 1),
         ]
-        sorted_next_steps = sorted(
-            [p[0] for p in shortest_paths], key=lambda x: (x[1], x[0])
-        )
-        next_step = sorted_next_steps[0]
-        self.x = next_step[0]
-        self.y = next_step[1]
+
+        for point in points_to_try:
+            if point not in all_reachable_squares or all_reachable_squares[point] > 1:
+                continue
+            would_be_reachables = self.cave.determine_all_reachable_squares(point)
+            if (
+                target_location in would_be_reachables
+                and would_be_reachables[target_location] == shortest_distance - 1
+            ):
+                self.x = point[0]
+                self.y = point[1]
 
     def move(self, squares):
-        reachable_squares = self.cave.determine_reachable_target_squares(
-            (self.x, self.y), squares
+        all_reachable_squares = self.cave.determine_all_reachable_squares(
+            (self.x, self.y)
         )
-        sorted_reachable_squares = sorted(reachable_squares.items(), key=lambda x: x[1])
-        if not sorted_reachable_squares:
+        reachable_target_squares = {
+            k: v for k, v in all_reachable_squares.items() if k in squares
+        }
+        sorted_reachable_target_squares = sorted(
+            reachable_target_squares.items(), key=lambda x: x[1]
+        )
+        if not sorted_reachable_target_squares:
             return
-        shortest_distance = sorted_reachable_squares[0][1]
+        shortest_distance = sorted_reachable_target_squares[0][1]
         closest_reachable_squares = [
             square[0]
-            for square in sorted_reachable_squares
+            for square in sorted_reachable_target_squares
             if square[1] == shortest_distance
         ]
         sorted_closest_squares = sorted(
@@ -69,7 +88,7 @@ class Monster(object):
         if not sorted_closest_squares:
             return
         target_square = sorted_closest_squares[0]
-        self.move_toward_square(target_square)
+        self.move_toward_square(target_square, shortest_distance, all_reachable_squares)
 
     def attack(self):
         if self.hp <= 0:  # if you died before you got a chance to attack this turn
