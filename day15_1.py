@@ -1,5 +1,7 @@
 from copy import copy
 
+from tqdm import tqdm
+
 
 def identify_open_squares_in_range_of_targets(cave, targets, who_wants_to_know=None):
     open_squares_adjacent_to_targets = set()
@@ -63,6 +65,7 @@ class Monster(object):
             ):
                 self.x = point[0]
                 self.y = point[1]
+                break
 
     def move(self, squares):
         all_reachable_squares = self.cave.determine_all_reachable_squares(
@@ -173,6 +176,7 @@ class Cave(object):
     def tick(self):
         monsters = sorted(self.elves + self.goblins, key=reading_order)
         complete_turn = True
+        # for monster in tqdm(monsters):
         for monster in monsters:
             if monster.hp > 0:  # check to see if they died before their turn
                 had_targets = monster.take_turn()
