@@ -1,10 +1,10 @@
 from day15_1 import parse_cave_input, run_cave_game
 
 if __name__ == '__main__':
-    cave = parse_cave_input('data/input15.txt')
     outcome = -1
     elf_power = 3
     while outcome == -1:
+        cave = parse_cave_input('data/input15.txt')
         elf_power += 1
         for elf in cave.elves:
             elf.power = elf_power
