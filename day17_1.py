@@ -86,15 +86,15 @@ class Ground(object):
     def standing_squares(self):
         return len(self.standing_coordinates)
 
-    def tick(self):
-        if self.water:
-            self.water = self.water.flow(self)
-        else:
-            self.water = Water(self, None)
-            self.water.x = self.well_coordinate[0]
-            self.water.y = self.well_coordinate[1] + 1
-
-        return True
+    # def tick(self):
+    #     if self.water:
+    #         self.water = self.water.flow(self)
+    #     else:
+    #         self.water = Water(
+    #             self, self.well_coordinate[0], self.well_coordinate[1] + 1, self, None
+    #         )
+    #
+    #     return True
 
 
 def parse_coordinates(raw_coords, reverse):
@@ -131,10 +131,9 @@ def create_ground_slice(filename):
 
 def calc_wettable_squares_from_file(filename):
     ground = create_ground_slice(filename)
-    wet_squares = -1
-    flowing_squares = -1
-    standing_squares = -1
-    water = Water(ground.well_coordinate[0], ground.well_coordinate[1], ground, None)
+    water = Water(
+        ground.well_coordinate[0], ground.well_coordinate[1] + 1, ground, None
+    )
     water.flow()
     return ground.wet_squares
 
