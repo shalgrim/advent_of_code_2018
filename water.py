@@ -50,6 +50,8 @@ class Water(object):
                 return left_result
 
     def _flow_below(self):
+        if self.y == self.ground.max_y:
+            return FLOWING
         below_char = self.ground.gimme_char(self.x, self.y + 1)
         if below_char in (CLAY, STANDING):
             return below_char

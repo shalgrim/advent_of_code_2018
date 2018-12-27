@@ -136,6 +136,7 @@ def calc_wettable_squares_from_file(filename):
     standing_squares = -1
     water = Water(ground.well_coordinate[0], ground.well_coordinate[1], ground, None)
     water.flow()
+    return ground.wet_squares
 
 
 if __name__ == '__main__':
