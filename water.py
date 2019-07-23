@@ -86,7 +86,7 @@ class Water(object):
     def _stand(self):
         self.ground.standing_coordinates.add((self.x, self.y))
         self.ground.flowing_coordinates.remove((self.x, self.y))
-        print(self.ground)
+        # print(self.ground)
         if self.left and self.left is not self.parent:
             self.left._stand()
         if self.right and self.right is not self.parent:
