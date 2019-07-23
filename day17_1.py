@@ -131,9 +131,9 @@ def create_ground_slice(filename):
 
 def calc_wettable_squares_from_file(filename):
     ground = create_ground_slice(filename)
-    water = Water(
-        ground.well_coordinate[0], ground.well_coordinate[1] + 1, ground, None
-    )
+    wx = ground.well_coordinate[0]
+    wy = ground.well_coordinate[1] + 1
+    water = Water(wx, wy, ground, None)
     water.flow()
     return ground.wet_squares
 
