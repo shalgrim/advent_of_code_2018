@@ -139,4 +139,5 @@ def calc_wettable_squares_from_file(filename):
 
 
 if __name__ == '__main__':
-    print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
+    # print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
+    print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')
