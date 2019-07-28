@@ -8,6 +8,7 @@ class Ground(object):
         self.flowing_coordinates = set()
         self.standing_coordinates = set()
         self.water = None
+        self.completed_coordinates = set()
 
     def gimme_char(self, x, y):
         if (x, y) in self.standing_coordinates:
@@ -60,6 +61,50 @@ class Ground(object):
 
         return '\n'.join(lines)
 
+    def check_square(self, square):
+        x, y = square
+        # print(f'checking {x}, {y}')
+        # print(f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares')
+        # print(self)
+
+        # Check 1: If we are at the max depth then we flow off and we're done
+        if y == self.max_y:
+            self.completed_coordinates.add(square)
+            return []
+
+        # Check 2: If below is FLOWING and completed, we're done
+        below_coord = (x, y+1)
+        below_char = self.gimme_char(*below_coord)
+        if below_char == FLOWING and below_coord in self.completed_coordinates:
+            self.completed_coordinates.add(square)
+            return []
+
+        # Check 3: Try to flow down, push this square and below to stack
+        if below_coord not in self.completed_coordinates and below_char not in (CLAY, STANDING):
+            self.flowing_coordinates.add(below_coord)
+            return [square, below_coord]
+
+        # Check 4: Try to flow left, push this square and left to stack
+        left_coord = (x-1, y)
+        if self.gimme_char(*left_coord) == SAND and self.gimme_char(*below_coord) in (CLAY, STANDING):
+            self.flowing_coordinates.add(left_coord)
+            return [square, left_coord]
+
+        # Check 5: Try to flow right, push this square and right to stack
+        right_coord = (x+1, y)
+        if self.gimme_char(*right_coord) == SAND and self.gimme_char(*below_coord) in (CLAY, STANDING):
+            self.flowing_coordinates.add(right_coord)
+            return [square, right_coord]
+
+        # I can't flow down, left, or right
+        # if self.gimme_char(*left_coord) in (CLAY, STANDING) or self.gimme_char(*right_coord) in (CLAY, STANDING):
+        if self._can_i_stand(square):
+            self.standing_coordinates.add(square)
+            self.flowing_coordinates.remove(square)
+        self.completed_coordinates.add(square)
+
+        return []
+
     @property
     def wet_squares(self):
         return len(self.flowing_coordinates) + len(self.standing_coordinates)
@@ -72,12 +117,27 @@ class Ground(object):
     def standing_squares(self):
         return len(self.standing_coordinates)
 
-    # def tick(self):
-    #     if self.water:
-    #         self.water = self.water.flow(self)
-    #     else:
-    #         self.water = Water(
-    #             self, self.well_coordinate[0], self.well_coordinate[1] + 1, self, None
-    #         )
-    #
-    #     return True
+    def _is_below_firm(self, square):
+        below_coord = (square[0], square[1]+1)
+        below_char = self.gimme_char(*below_coord)
+        return below_char in (CLAY, STANDING)
+
+    def _can_i_stand(self, square):
+        if not self._is_below_firm(square):
+            return False
+
+        # check to the left
+        square_to_check = (square[0]-1, square[1])
+        while self.gimme_char(*square_to_check) != CLAY:
+            if not self._is_below_firm(square_to_check):
+                return False
+            square_to_check = (square_to_check[0]-1, square_to_check[1])
+
+        # check to the right
+        square_to_check = (square[0]+1, square[1])
+        while self.gimme_char(*square_to_check) != CLAY:
+            if not self._is_below_firm(square_to_check):
+                return False
+            square_to_check = (square_to_check[0]+1, square_to_check[1])
+
+        return True

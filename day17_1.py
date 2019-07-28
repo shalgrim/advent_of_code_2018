@@ -53,7 +53,13 @@ def calc_wettable_squares_from_file(filename):
     wx = ground.well_coordinate[0]
     wy = ground.well_coordinate[1] + 1
     water = Water(wx, wy, ground, None)
-    water.flow()
+    squares_to_check = [(wx, wy)]
+
+    while squares_to_check:
+        new_squares_to_check = ground.check_square(squares_to_check.pop())
+        squares_to_check.extend(new_squares_to_check)
+
+    # water.flow()
     return ground.wet_squares
 
 
