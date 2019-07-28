@@ -29,7 +29,7 @@ class Water(object):
             self.right = None
         self.below = None
         self.ground.flowing_coordinates.add((self.x, self.y))
-        print(self.ground)
+        # print(self.ground)
 
     def flow(self):
         below_result = self._flow_below()
