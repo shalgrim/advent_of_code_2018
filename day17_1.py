@@ -56,6 +56,7 @@ def calc_wettable_squares_from_file(filename):
     squares_to_check = [(wx, wy)]
 
     while squares_to_check:
+        # print(f'{len(squares_to_check)} squares to check')
         new_squares_to_check = ground.check_square(squares_to_check.pop())
         squares_to_check.extend(new_squares_to_check)
 
@@ -64,5 +65,5 @@ def calc_wettable_squares_from_file(filename):
 
 
 if __name__ == '__main__':
-    # print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
-    print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')
+    print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
+    # print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')
