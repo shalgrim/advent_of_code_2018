@@ -28,7 +28,8 @@ def parse_coordinates(raw_coords, reverse):
         ranges.append(range(start, stop + 1))
 
     ranges = ranges[::-1] if reverse else ranges
-    return sorted(product(*ranges))
+    to_return = sorted(product(*ranges))
+    return to_return
 
 
 def create_ground_slice(filename):
@@ -61,6 +62,5 @@ def calc_wettable_squares_from_file(filename):
 
 
 if __name__ == '__main__':
-    # TODO: Next step, create a `print_vicinity` that will do like a 20x20 print around current square being checked
     print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
     # print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')

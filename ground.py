@@ -97,7 +97,7 @@ class Ground(object):
             f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
         )
         # print(self)
-        self.print_vicinity(square, 20, 10)
+        # self.print_vicinity(square, 20, 10)
 
         # Check 1: If we are at the max depth then we flow off and we're done
         if y == self.max_y:
