@@ -35,11 +35,12 @@ def create_ground_slice(filename):
     with open(filename) as f:
         lines = f.readlines()
 
-    clay_coords = []
+    clay_coords = set()
 
     for line in lines:
         raw_coords = line.strip().split(', ')
-        clay_coords.extend(parse_coordinates(raw_coords, reverse=line[0] == 'y'))
+        intermediate_coords = parse_coordinates(raw_coords, reverse=line[0] == 'y')
+        clay_coords = clay_coords.union(set(intermediate_coords))
 
     return Ground(clay_coords)
 
