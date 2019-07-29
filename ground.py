@@ -24,13 +24,13 @@ class Ground(object):
     def max_y(self):
         return max(coord[1] for coord in self.clay_coordinates)
 
-    def _build_headers(self, center_x=None):
+    def _build_headers(self, center_x=None, x_radius=None):
         if center_x is None:
             min_x = min(coord[0] for coord in self.clay_coordinates) - 1
             max_x = max(coord[0] for coord in self.clay_coordinates) + 1
         else:
-            min_x = center_x - 20
-            max_x = center_x + 20
+            min_x = center_x - x_radius
+            max_x = center_x + x_radius
 
         min_y = 0
         lines = [
@@ -44,7 +44,7 @@ class Ground(object):
 
     def print_vicinity(self, square, x_radius=20, y_radius=20):
         # build headers
-        lines = self._build_headers(square[0])
+        lines = self._build_headers(square[0], x_radius)
 
         for y in range(max(1, square[1] - y_radius), square[1] + y_radius):
             lines.append(
@@ -97,7 +97,7 @@ class Ground(object):
             f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
         )
         # print(self)
-        # self.print_vicinity(square, 20, 10)
+        self.print_vicinity(square, 40, 20)
 
         # Check 1: If we are at the max depth then we flow off and we're done
         if y == self.max_y:
