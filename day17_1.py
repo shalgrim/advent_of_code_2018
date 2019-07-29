@@ -60,10 +60,10 @@ def calc_wettable_squares_from_file(filename):
         new_squares_to_check = ground.check_square(squares_to_check.pop())
         squares_to_check.extend(new_squares_to_check)
 
-    # water.flow()
     return ground.wet_squares
 
 
 if __name__ == '__main__':
+    # TODO: Next step, create a `print_vicinity` that will do like a 20x20 print around current square being checked
     print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
     # print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')

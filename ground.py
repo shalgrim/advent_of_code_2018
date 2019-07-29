@@ -24,12 +24,15 @@ class Ground(object):
     def max_y(self):
         return max(coord[1] for coord in self.clay_coordinates)
 
-    def __str__(self):
-        min_x = min(coord[0] for coord in self.clay_coordinates) - 1
-        max_x = max(coord[0] for coord in self.clay_coordinates) + 1
-        min_y = 0
+    def _build_headers(self, center_x=None):
+        if center_x is None:
+            min_x = min(coord[0] for coord in self.clay_coordinates) - 1
+            max_x = max(coord[0] for coord in self.clay_coordinates) + 1
+        else:
+            min_x = center_x - 20
+            max_x = center_x + 20
 
-        # build headers
+        min_y = 0
         lines = [
             '     {}'.format(''.join([str(x // 100) for x in range(min_x, max_x + 1)])),
             '     {}'.format(
@@ -37,6 +40,32 @@ class Ground(object):
             ),
             '     {}'.format(''.join([str(x % 10) for x in range(min_x, max_x + 1)])),
         ]
+        return lines
+
+    def print_vicinity(self, square):
+        # build headers
+        lines = self._build_headers(square[0])
+
+        for y in range(max(1, square[1] - 20), square[1] + 20):
+            lines.append(
+                '{:>4} {}'.format(
+                    y,
+                    ''.join(
+                        self.gimme_char(x, y)
+                        for x in range(square[0] - 20, square[0] + 20)
+                    ),
+                )
+            )
+
+        print('\n'.join(lines))
+
+    def __str__(self):
+        min_x = min(coord[0] for coord in self.clay_coordinates) - 1
+        max_x = max(coord[0] for coord in self.clay_coordinates) + 1
+        min_y = 0
+
+        # build headers
+        lines = self._build_headers()
 
         # build ground level
         line = '   0 '
@@ -63,9 +92,11 @@ class Ground(object):
 
     def check_square(self, square):
         x, y = square
-        # print(f'checking {x}, {y}')
-        # print(f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares')
-        # print(self)
+        print(f'checking {x}, {y}')
+        print(
+            f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
+        )
+        print(self)
 
         # Check 1: If we are at the max depth then we flow off and we're done
         if y == self.max_y:
@@ -73,26 +104,35 @@ class Ground(object):
             return []
 
         # Check 2: If below is FLOWING and completed, we're done
-        below_coord = (x, y+1)
+        below_coord = (x, y + 1)
         below_char = self.gimme_char(*below_coord)
         if below_char == FLOWING and below_coord in self.completed_coordinates:
             self.completed_coordinates.add(square)
             return []
 
         # Check 3: Try to flow down, push this square and below to stack
-        if below_coord not in self.completed_coordinates and below_char not in (CLAY, STANDING):
+        if below_coord not in self.completed_coordinates and below_char not in (
+            CLAY,
+            STANDING,
+        ):
             self.flowing_coordinates.add(below_coord)
             return [square, below_coord]
 
         # Check 4: Try to flow left, push this square and left to stack
-        left_coord = (x-1, y)
-        if self.gimme_char(*left_coord) == SAND and self.gimme_char(*below_coord) in (CLAY, STANDING):
+        left_coord = (x - 1, y)
+        if self.gimme_char(*left_coord) == SAND and self.gimme_char(*below_coord) in (
+            CLAY,
+            STANDING,
+        ):
             self.flowing_coordinates.add(left_coord)
             return [square, left_coord]
 
         # Check 5: Try to flow right, push this square and right to stack
-        right_coord = (x+1, y)
-        if self.gimme_char(*right_coord) == SAND and self.gimme_char(*below_coord) in (CLAY, STANDING):
+        right_coord = (x + 1, y)
+        if self.gimme_char(*right_coord) == SAND and self.gimme_char(*below_coord) in (
+            CLAY,
+            STANDING,
+        ):
             self.flowing_coordinates.add(right_coord)
             return [square, right_coord]
 
@@ -118,7 +158,7 @@ class Ground(object):
         return len(self.standing_coordinates)
 
     def _is_below_firm(self, square):
-        below_coord = (square[0], square[1]+1)
+        below_coord = (square[0], square[1] + 1)
         below_char = self.gimme_char(*below_coord)
         return below_char in (CLAY, STANDING)
 
@@ -127,17 +167,17 @@ class Ground(object):
             return False
 
         # check to the left
-        square_to_check = (square[0]-1, square[1])
+        square_to_check = (square[0] - 1, square[1])
         while self.gimme_char(*square_to_check) != CLAY:
             if not self._is_below_firm(square_to_check):
                 return False
-            square_to_check = (square_to_check[0]-1, square_to_check[1])
+            square_to_check = (square_to_check[0] - 1, square_to_check[1])
 
         # check to the right
-        square_to_check = (square[0]+1, square[1])
+        square_to_check = (square[0] + 1, square[1])
         while self.gimme_char(*square_to_check) != CLAY:
             if not self._is_below_firm(square_to_check):
                 return False
-            square_to_check = (square_to_check[0]+1, square_to_check[1])
+            square_to_check = (square_to_check[0] + 1, square_to_check[1])
 
         return True
