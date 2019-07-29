@@ -42,17 +42,17 @@ class Ground(object):
         ]
         return lines
 
-    def print_vicinity(self, square):
+    def print_vicinity(self, square, radius=20):
         # build headers
         lines = self._build_headers(square[0])
 
-        for y in range(max(1, square[1] - 20), square[1] + 20):
+        for y in range(max(1, square[1] - radius), square[1] + radius):
             lines.append(
                 '{:>4} {}'.format(
                     y,
                     ''.join(
                         self.gimme_char(x, y)
-                        for x in range(square[0] - 20, square[0] + 20)
+                        for x in range(square[0] - radius, square[0] + radius)
                     ),
                 )
             )
@@ -96,7 +96,8 @@ class Ground(object):
         print(
             f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
         )
-        print(self)
+        # print(self)
+        self.print_vicinity(square, 12)
 
         # Check 1: If we are at the max depth then we flow off and we're done
         if y == self.max_y:
