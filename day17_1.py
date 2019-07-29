@@ -40,10 +40,6 @@ def create_ground_slice(filename):
     for line in lines:
         raw_coords = line.strip().split(', ')
         clay_coords.extend(parse_coordinates(raw_coords, reverse=line[0] == 'y'))
-        if line[0] == 'x':
-            ordering = (0, 1)
-        else:
-            ordering = (1, 0)
 
     return Ground(clay_coords)
 
