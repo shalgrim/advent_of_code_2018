@@ -1,3 +1,4 @@
+import time
 from water import CLAY, FLOWING, SAND, STANDING, WELL
 
 
@@ -59,45 +60,47 @@ class Ground(object):
 
         print('\n'.join(lines))
 
-    def __str__(self):
-        min_x = min(coord[0] for coord in self.clay_coordinates) - 1
-        max_x = max(coord[0] for coord in self.clay_coordinates) + 1
-        min_y = 0
-
-        # build headers
-        lines = self._build_headers()
-
-        # build ground level
-        line = '   0 '
-        for x in range(min_x, max_x + 1):
-            if (x, 0) == self.well_coordinate:
-                line += WELL
-            elif (x, 0) in self.clay_coordinates:
-                line += CLAY
-            else:
-                line += SAND
-        lines.append(line)
-
-        # build ground slice
-        for y in range(1, self.max_y + 1):
-            lines.append(
-                '{:>4} {}'.format(
-                    y, ''.join([self.gimme_char(x, y) for x in range(min_x, max_x + 1)])
-                )
-            )
-
-        lines = [''] + lines + ['']
-
-        return '\n'.join(lines)
+    # def __str__(self):
+    #     min_x = min(coord[0] for coord in self.clay_coordinates) - 1
+    #     max_x = max(coord[0] for coord in self.clay_coordinates) + 1
+    #     min_y = 0
+    #
+    #     # build headers
+    #     lines = self._build_headers()
+    #
+    #     # build ground level
+    #     line = '   0 '
+    #     for x in range(min_x, max_x + 1):
+    #         if (x, 0) == self.well_coordinate:
+    #             line += WELL
+    #         elif (x, 0) in self.clay_coordinates:
+    #             line += CLAY
+    #         else:
+    #             line += SAND
+    #     lines.append(line)
+    #
+    #     # build ground slice
+    #     for y in range(1, self.max_y + 1):
+    #         lines.append(
+    #             '{:>4} {}'.format(
+    #                 y, ''.join([self.gimme_char(x, y) for x in range(min_x, max_x + 1)])
+    #             )
+    #         )
+    #
+    #     lines = [''] + lines + ['']
+    #
+    #     return '\n'.join(lines)
 
     def check_square(self, square):
         x, y = square
-        print(f'checking {x}, {y}')
-        print(
-            f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
-        )
         # print(self)
-        self.print_vicinity(square, 40, 20)
+        if y >= 0:
+            print(f'checking {x}, {y}')
+            print(
+                f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
+            )
+            time.sleep(0.1)
+            self.print_vicinity(square, 40, 20)
 
         # Check 1: If we are at the max depth then we flow off and we're done
         if y == self.max_y:
@@ -139,12 +142,32 @@ class Ground(object):
 
         # I can't flow down, left, or right
         # if self.gimme_char(*left_coord) in (CLAY, STANDING) or self.gimme_char(*right_coord) in (CLAY, STANDING):
-        if self._can_i_stand(square):
+        if self._can_i_stand(square) and square not in self.completed_coordinates:
             self.standing_coordinates.add(square)
             self.flowing_coordinates.remove(square)
+            self._stand_left(square)
+            self._stand_right(square)
         self.completed_coordinates.add(square)
 
         return []
+
+    def _stand_left(self, square):
+        left = (square[0]-1, square[1])
+        while self.gimme_char(*left) != CLAY:
+            self.standing_coordinates.add(left)
+            if left in self.flowing_coordinates:
+                self.flowing_coordinates.remove(left)
+            self.completed_coordinates.add(left)
+            left = (left[0]-1, left[1])
+
+    def _stand_right(self, square):
+        right = (square[0]+1, square[1])
+        while self.gimme_char(*right) != CLAY:
+            self.standing_coordinates.add(right)
+            if right in self.flowing_coordinates:
+                self.flowing_coordinates.remove(right)
+            self.completed_coordinates.add(right)
+            right = (right[0]+1, right[1])
 
     @property
     def wet_squares(self):

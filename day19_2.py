@@ -40,9 +40,11 @@ def run_program(instructions, instruction_pointer, starting_registers=None):
 
 def main(filename):
     instruction_pointer, instructions = parse_input_day19(filename)
-    starting_registers = [6, 10551289, 13, 10551288, 4, 1]
-    # registers = run_program(instructions, instruction_pointer, starting_registers)
-    registers = run_program(instructions, instruction_pointer)
+    # starting_registers = [6, 10551289, 13, 10551288, 4, 1]
+    starting_registers = [864, 10551289, 13, 10551288, 157, 1]
+    # starting_registers = [0] * 6  # and that works
+    registers = run_program(instructions, instruction_pointer, starting_registers)
+    # registers = run_program(instructions, instruction_pointer)
     return registers[0]
 
 
