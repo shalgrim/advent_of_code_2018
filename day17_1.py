@@ -58,9 +58,12 @@ def calc_wettable_squares_from_file(filename):
         new_squares_to_check = ground.check_square(squares_to_check.pop())
         squares_to_check.extend(new_squares_to_check)
 
-    return ground.wet_squares
+    print(f'total wet squares: {ground.wet_squares}')
+    print(f'wet squares in range: {ground.wet_squares_in_range}')
+    return ground.wet_squares_in_range
 
 
 if __name__ == '__main__':
+    # 50842 is incorrect
     print(f'answer: {calc_wettable_squares_from_file("data/input17.txt")}')
     # print(f'answer: {calc_wettable_squares_from_file("data/test17.txt")}')

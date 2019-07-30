@@ -22,6 +22,10 @@ class Ground(object):
             return SAND
 
     @property
+    def min_y(self):
+        return min(coord[1] for coord in self.clay_coordinates)
+
+    @property
     def max_y(self):
         return max(coord[1] for coord in self.clay_coordinates)
 
@@ -94,13 +98,14 @@ class Ground(object):
     def check_square(self, square):
         x, y = square
         # print(self)
-        if y >= 0:
-            print(f'checking {x}, {y}')
-            print(
-                f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
-            )
-            time.sleep(0.1)
-            self.print_vicinity(square, 40, 20)
+        print(f'checking {x}, {y}')
+        print(
+            f'{self.flowing_squares} flowing squares and {self.standing_squares} standing squares'
+        )
+
+        # if y >= 1070:
+        #     time.sleep(0.02)
+        #     self.print_vicinity(square, 40, 20)
 
         # Check 1: If we are at the max depth then we flow off and we're done
         if y == self.max_y:
@@ -152,26 +157,36 @@ class Ground(object):
         return []
 
     def _stand_left(self, square):
-        left = (square[0]-1, square[1])
+        left = (square[0] - 1, square[1])
         while self.gimme_char(*left) != CLAY:
             self.standing_coordinates.add(left)
             if left in self.flowing_coordinates:
                 self.flowing_coordinates.remove(left)
             self.completed_coordinates.add(left)
-            left = (left[0]-1, left[1])
+            left = (left[0] - 1, left[1])
 
     def _stand_right(self, square):
-        right = (square[0]+1, square[1])
+        right = (square[0] + 1, square[1])
         while self.gimme_char(*right) != CLAY:
             self.standing_coordinates.add(right)
             if right in self.flowing_coordinates:
                 self.flowing_coordinates.remove(right)
             self.completed_coordinates.add(right)
-            right = (right[0]+1, right[1])
+            right = (right[0] + 1, right[1])
 
     @property
     def wet_squares(self):
         return len(self.flowing_coordinates) + len(self.standing_coordinates)
+
+    @property
+    def wet_squares_in_range(self):
+        flowing_in_range = [
+            c for c in self.flowing_coordinates if self.min_y <= c[1] <= self.max_y
+        ]
+        standing_in_range = [
+            c for c in self.standing_coordinates if self.min_y <= c[1] <= self.max_y
+        ]
+        return len(flowing_in_range) + len(standing_in_range)
 
     @property
     def flowing_squares(self):
