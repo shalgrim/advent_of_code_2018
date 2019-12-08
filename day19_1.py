@@ -4,12 +4,6 @@ import sys
 from logging import StreamHandler
 
 logger = logging.getLogger('advent_of_code.2018.day19_1')
-logging.basicConfig(
-    filename='day19_1.log',
-    level=logging.WARNING,
-    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S',
-)
 logger.addHandler(StreamHandler(sys.stdout))
 
 
@@ -48,4 +42,10 @@ def main(filename):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(
+        filename='day19_1.log',
+        level=logging.WARNING,
+        format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+    )
     print(main('data/input19.txt'))
