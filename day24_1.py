@@ -196,6 +196,7 @@ def day24_1(filename):
     army_infection = armies['infection']
 
     while army_immune.has_units and army_infection.has_units:
+        # TODO: print status of battle
         army_target_selection(army_immune, army_infection)
         army_attack(army_immune, army_infection)
         for group in army_immune.groups + army_infection.groups:
