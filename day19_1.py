@@ -25,7 +25,16 @@ def parse_input_day19(filename):
 def run_program(instructions, instruction_pointer):
     registers = [0] * 6
 
+    run_once = {k: False for k in range(17, 36)}
+
     while 0 <= registers[instruction_pointer] < len(instructions):
+
+        # code to verify analysis that I17+ only run at most once
+        # confirmed for part 1
+        if instruction_pointer in run_once:
+            assert not run_once[instruction_pointer]
+            run_once[instruction_pointer] = True
+
         instruction = instructions[registers[instruction_pointer]]
         opcode = getattr(opcodes, instruction[0])
         output_line = f'ip={registers[instruction_pointer]} {registers} {" ".join([str(i) for i in instruction])} '

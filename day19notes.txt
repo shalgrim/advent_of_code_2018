@@ -1,0 +1,183 @@
+How this program works
+Hoping to identify some loops
+
+reg4 > reg3 (I13) is the termination condition
+
+I03 sets reg5 to reg1*reg4
+  those two regs themselves are set in I01 and I02, but I02 and I03 can be jumped to directly
+
+First thing to check is if my analysis that I00, I17+ are all only run at most once
+  I confirmed this for part 1
+  A-ha, and that's what setting reg0 gets you, lines I27+ get run then but don't if set to 0
+Another thing to check would be if I25 ever jumps more than 1 line
+  Given that it only gets run once and that depends on what reg0 is initially sent to, no
+
+And I01 also only ever gets run once, after I25 or I35
+
+So then we have this setup before "staring" at I02
+
+SETUP:
+- reg3 <- 10,551,288
+- reg5 <- 10,550,400
+- reg0 <- 0
+- reg4 <- 1
+
+So then we "really" start at I02 with this setup
+[0, 0, 1, 10,551,241, 1, 10,550,400]
+
+# I think wherever I said 10551241 I meant 10551288
+
+
+ And pick up with analyzing how lines I01-I16 work
+ Since reg3 never gets updated again, the terminating condition is reg4 > 10,551,241
+ Unfortunately reg4 is only ever incremented (I12, right before check for termination)
+ Line I12 (reg4++) is run iff reg1 > reg3...i.e., reg1 > 10,551,241
+   So, every time reg1 gets > 10,551,241, reg4 goes up by one
+   Otherwise, if reg1 <= 10,551,241, we jump to I03
+ Anyway
+ I02 - reg1 <- 1
+ I03 - reg5 <- reg1 * reg4 (so varies depending on whether we came from I02 or I11)
+ I04-I07 - if reg3 == reg5: reg0 += reg4
+ I08 - reg1++
+ I09-I11 - if reg1 > reg3: GOTO I12; else: GOTO I03
+ I12 - reg4++
+ I13+ - terminate if reg4 > reg3 else GOTO I02
+
+ ^ So I could at least convert that into another version of the program and see
+ if I can replicate results of part1...of course need different reg3 (888)
+
+ I did that in day19_alternate.py and it worked for part1, but part2 is still too slow
+
+ So now it's to figure out a different way of determining the answer to that puzzle
+
+ The outer loop is going to run 10,551,241 times
+ The inner loop will run 10,551,241 times each time the outer loop runs
+ Every time reg5 == 10,551,241, reg0 gets increased by reg4 (which is tracking the outer loop)
+ The first time through, reg0 will get increased by 1 once (TODO: verify)
+ The second time through, reg0 will get increased by 2 zero times (TODO: verify)
+ The third time through (reg4 == 3), reg0 will get increased by 3 zero times (TODO: verify)
+
+ Okay, so it seems like reg0 gets increased by reg4 iff 10,551,241 mod reg4 == 0
+ So if I can prime factorize this then sum up those nums, I should get answer?
+
+ PF of 888:
+ 2, 2, 2, 3, 37
+ sum = way less than 2280 so i'm doing something wrong
+
+So reg0 gets increased by reg4 at most once through the small loop...
+the trick is figuring out which ones
+
+Oh wait, I bet it's whenever reg3 % reg4 == 0
+Yep, that's it, verified for 888
+
+```
+answer = 0
+for i in range(1, 889):
+...     if 888 % i == 0:
+...         answer += i
+...
+answer
+2280
+```
+
+well, maybe not...I tried 6493114 as an answer and it was wrong
+wait...try 10551242 in five minutes
+well that's also wrong sigh
+
+I've got another one to try at 14:38 or later: 30481920...that's right!
+
+```
+answer = 0
+for i in range(1, 10551242):
+...     if 10551241 % i == 0:
+...         answer += i
+...
+answer
+10551242
+```
+
+=== PROGRAM FLOW ===
+
+I00 - jump to I17
+I01 - set register 4 to 1 (arrive from I25, I35)
+I02 - set register 1 to 1 (arrive from I01, I15)
+I03 - set register 5 to reg1 * reg4 (arrive from I02, I11)
+I04-I08 (arrive from I03)
+  - if reg5 == reg3 (reg 5 last set in I03, reg3 last set ??)
+    - add reg4 to reg0 (reg4 last set in I01 and/or ??))
+  - then increment reg1
+
+I09-I11 (arrive from I08)
+ - if reg1 > reg3 jump to I12 (reg1 last set ??, reg3 last set ??)
+ - else jump to I03
+
+I12 - reg4 += 1  (arrive from I11)
+
+I13-I16  (arrive from I12)
+  - if reg3 >= reg4, TERMINATE PROGRAM  # reg4 last set I12, reg3 last set??
+  - else go to I02
+
+I17-I20 - reg3 = (reg3 + 2)^2 * 209 (reg3 last set initially) (arrive from I00 (and that's it?))
+  - Since we only ever arrive from I00, this sets reg3 to 836
+
+I21-I23 - reg5 = (reg5 + 2) * 22 + 8 (reg5 last set initially)
+
+I24 - reg3 add reg5 to reg3 (arrive I23)
+
+I25-I26 (arrive I24)
+  - If reg0 == 0, jump to I00 (i.e., jump to I01)
+  - If reg0 >= 1, jump (from I25) number of lines in reg0 (probably usually 1?, so I27)
+  - reg0 is
+    - 1 initially for part 2
+    - set to 0 on I34
+    - set to reg4 on I9
+    - so if reg0 is >= 11(?) this could also TERMINATE PROGRAM
+  - Since this is only ever run thru once, this runs jumps to I01 if reg0 == 0 (part 1) or I27 if reg == 1 (part 2)
+
+I27-I33 - add 10,550,400 to reg3 (assumes I25 jumped to I27 and not later) (arrive from I25)
+
+I34-I35 - set reg0 to 0 and jumps to I01 (arrive from I33)
+
+
+ == Where the registers get set ==
+
+ REG0
+   - INITIAL - set to 1
+   - I09 - increased by reg4
+   - I34 - set to 0
+
+ REG1
+   - INITIAL - set to 0
+   - I02 - set to 1
+   - I08 - incremented
+
+ REG2
+   - IP SO INCREMENTED AFTER EVERY INSTRUCTION
+   - INITIAL - set to 0
+   - I00 - increased by 16 (i.e., jump to I17)
+   - I05 - increased by reg5 (i.e., jump reg5 lines) (set to 0 or 1 in I04)
+   - I06 - incremented (i.e., jump to I08)
+   - I10 - increased by reg5 (i.e., jump reg5 lines) (set to 0 or 1 in I09)
+   - I11 - set to 2 (i.e., go to I03)
+   - I14 - increased by reg5 (i.e., jump reg5 lines) (set to 0 or 1 in I13)
+
+ REG3
+   - tldr; only gets set in SETUP
+   - INITIAL - set to 0
+   - I17-I20 - reg3 = (reg3 + 2)^2 * 209
+   - I26 - increased by 5
+   - I35 - increased by reg5
+
+  REG4
+    - INITIAL - set to 0
+    - I01 - set to 1
+    - I14 - incremented
+
+  REG5
+    - INITIAL - set to 0
+    - I03 - set to reg4 * reg1 (usually 1*1)
+    - I04 - set to 1 (if reg3 == reg5) or 0
+    - I09 - set to 1 (if reg1 > reg3) or 0
+    - I13 - set to 1 (if reg4 > reg3) or 0  # check for TERMINATING CONDITION
+    - I21-23 - reg5 = (reg5 + 2) * 22 + 8
+    - I27-I33 - set to 10,550,400 (assuming I25 went to I27 and not I28 or higher)
