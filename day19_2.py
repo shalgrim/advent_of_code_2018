@@ -1,8 +1,8 @@
-import opcodes
 import logging
 import sys
 from logging import StreamHandler
 
+import opcodes
 from day19_1 import parse_input_day19
 
 logger = logging.getLogger('advent_of_code.2018.day19_2')

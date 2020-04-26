@@ -9,11 +9,13 @@ logger.addHandler(StreamHandler(sys.stdout))
 
 def parse_input_day19(filename):
     with open(filename) as f:
-        lines = f.readlines()
+        rawlines = f.readlines()
 
-    instruction_pointer = int(lines[0].strip().split()[1])
+    instruction_pointer = int(rawlines[0].strip().split()[1])
+    otherlines = [line.split('#')[0].strip() for line in rawlines[1:]]  # strip comments
+
     instructions = []
-    for line in lines[1:]:
+    for line in otherlines:
         opcode = line.split()[0]
         instructions.append([opcode] + [int(c) for c in line.strip().split()[1:]])
 
