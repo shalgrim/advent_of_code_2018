@@ -1,0 +1,72 @@
+How this program works
+
+IP is 4
+
+They don't tell you what 0 starts off as, you have to figure that out
+So 0 starts off as 0, 1, 2, 3, 4, etc.
+The other reigsters all start at 0
+
+Terminating Condition seems to be:
+reg2 > 256 and reg0 == reg1
+
+Note that reg0 never gets set within code
+
+=== PROGRAM FLOW ===
+
+I00 - reg1 <- 123
+I01 - reg1 <- reg1 & 456 (123 & 456 == 72)
+I02 - reg1 <- 1 if reg1 == 72 else 0
+I03 - AFFECTS IP reg4 += reg1 (i.e., go to I05 if doing bitwise correct)
+I04 - AFFECTS IP - go to I01 probably infinite loop
+
+I05 - reg1 <- 0 (arrive I03)
+
+PROBABLE ACTUAL START with regs [x, 0, 0, 0, 5, 0]
+I06 - reg2 <- reg1 | 65536 (big 0 mask) (arrive I05, I30) (so basically addition)
+I07 - reg1 <- 8725355
+I08 - reg5 <- reg2 & 255 (basically masks reg2 into reg5) (arrive I07, I27)
+I09 - reg1 += reg5 (now 14)
+I10 - reg1 <- reg1 & 16777215 (another big ol' mask) (so 7 still)
+I11 - reg1 *= 65899 (now 461293)
+I12 - reg1 <- reg1 & 16777215 (same as I10)
+
+I13-I16 (arrive I12)
+- if 256 > reg2, GOTO I28 (and maybe terminate)
+- else fall thru to I17
+
+I17 - reg5 <- 0
+I18 - reg3 <- reg5 + 1 (arrive I17, I25)
+I19 - reg3 *= 256 (arrive I18)
+
+I20-I23, I26-I27 (arrive I15, I19)
+- if reg3 > reg2:
+  - reg2 <- reg5
+  - GOTO I08
+- else fall thru to I24
+
+I24 - reg5 += 1  (arrive I22)
+I25 - GOTO I18  (arrive I24)
+
+I26-27 (see I20-I23 above)
+
+I28-I30 (arrive I16)
+- if reg0 == reg1, TERMINATE
+- else GOTO I06
+
+Step: translating above into code
+Done, and it returns lickety split
+With registers (4682012, 4682012, 1, 512, -1, 1)
+
+Next step is to figure out what I08-I12 do and refactor them into a well-named function
+(I already have a one-liner version at the end)
+(I believe I can convert `& 255` to `% 256` and `& TWENTY_FOUR_ONES` TO `% TWENTY_FOUR_ONES + 1`
+
+Actually before that, what I might do is create a test for this
+Where it ticks how many times through each loop
+And returns those finals plus the registers
+And so I can continue to refactor and make sure my code is still right
+And then I can even refactor things like reg0 == reg1 into something like
+  [what reg1 represents] == randomstarterreg0
+
+ Or maybe what I said before but composing it even more sensible smaller ones like
+ `def mod256(n): return n % 256` or `lambda x: x%256`
