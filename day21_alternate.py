@@ -1,3 +1,14 @@
+import logging
+import sys
+from logging import StreamHandler
+
+logger = logging.getLogger('advent_of_code_2018.day21_alternate')
+logging.basicConfig(filename='day21_alternate.log',
+                    level=logging.INFO,
+                    format='%(levelname) -10s %(asctime)s %(module)s line %(lineno)d: %(message)s',
+                    datefmt="%Y-%m-%d %H:%M:%S")
+logger.addHandler(StreamHandler(sys.stdout))
+
 REG0 = 4_682_012
 ONE_THEN_16_ZEROS = 65536  # 2^16
 EIGHT_ONES = 255  # 2^8 - 1
@@ -26,14 +37,18 @@ def main():
     reg5 = 0
 
     while reg0 != reg1:  # I06 loop
+        logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
         # I06 - addition except when the 2^16 bit is turned on in reg1 then it's the original number
         reg2 = (
             reg1 | ONE_THEN_16_ZEROS
-        )  # I06 - addition except when the 2^16 bit is turned on in reg1 then it's
+        )
+        logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
         reg1 = BIG_RANDO  # I07
+        logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
         # do part of do-while loop
         reg1 = big_fat_one(reg1, reg2)
+        logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
         while EIGHT_ONES < reg2:  # I08 loop
             # invariant 256 <= reg2
@@ -44,21 +59,27 @@ def main():
 
             # Count how many times reg3 has to go up by 512 before it's > reg2 (I think)
             while reg3 <= reg2:
+                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
                 reg5 += 1
+                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
                 reg3 = reg5 + 1
+                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
                 reg3 *= (
                     256
                 )  # so this is like reg3 going up by 512 each time until it's bigger than reg2?
+                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
                 # So could I get at this with something like
                 # reg5 = reg2 / 512  (that's not quite right)
 
             reg2 = (
                 reg5
             )  # I26; and then set the number of times it had to increase to reg2
+            logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
             # something about the number of times we did that (big_fat_one?) combined with where reg1 was
             # and putting that back in reg1
             reg1 = big_fat_one(reg1, reg2)
+            logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
     return reg0, reg1, reg2, reg3, reg4, reg5
 
