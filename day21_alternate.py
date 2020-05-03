@@ -50,30 +50,13 @@ def main():
         reg1 = big_fat_one(reg1, reg2)
         logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
-        while EIGHT_ONES < reg2:  # I08 loop
+        while EIGHT_ONES < reg2:  # I08 loop...i.e., while reg2 > 256
             # invariant 256 <= reg2
 
             # I17 - I27
-            reg5 = 0
-            reg3 = 256
-
-            # Count how many times reg3 has to go up by 512 before it's > reg2 (I think)
-            while reg3 <= reg2:
-                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
-                reg5 += 1
-                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
-                reg3 = reg5 + 1
-                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
-                reg3 *= (
-                    256
-                )  # so this is like reg3 going up by 512 each time until it's bigger than reg2?
-                logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
-                # So could I get at this with something like
-                # reg5 = reg2 / 512  (that's not quite right)
-
-            reg2 = (
-                reg5
-            )  # I26; and then set the number of times it had to increase to reg2
+            reg5 = 0  # don't need this except for logging below
+            reg3 = 256  # don't need this except for logging below
+            reg2 = reg2 // 256
             logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
             # something about the number of times we did that (big_fat_one?) combined with where reg1 was
