@@ -51,7 +51,7 @@ def main():
         logger.info(f'{(reg0, reg1, reg2, reg3, reg4, reg5)}')
 
         while EIGHT_ONES < reg2:  # I08 loop...i.e., while reg2 > 256
-            # invariant 256 <= reg2
+            # invariant 256 < reg2
 
             # I17 - I27
             reg5 = 0  # don't need this except for logging below

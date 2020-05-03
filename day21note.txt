@@ -80,3 +80,15 @@ But that's not quite right
 Because there's that extra 256 in there
 And...it's something like SomeConstant * (reg2 / 512)
 And maybe there's an addition of a constant in there
+
+Okay, replaced that innermost while with a // operation
+So now the I08 loop is basically to keep reducing reg until it reg2 <= 256
+And the I08 loop is doing two things:
+  1. reducing reg2 by a factor of 256
+  1. doing the `big_fat_one`
+
+So next we will have to
+1) figure out how many 256's are in reg2 at the start of the I08 loop (and it's FULL 256's, so between 256 and 65535 it's only one)
+2) use that calculation to calculate reg1 after each I08 loop
+2a) It's N + 1 times that big_fat_one runs where N is the full number of 256's in there
+2b) But note that each of those N+1 times produces a different number since the inputs reg1 and reg2 will be different every time
