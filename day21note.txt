@@ -25,8 +25,10 @@ PROBABLE ACTUAL START with regs [x, 0, 0, 0, 5, 0]
 I06 - reg2 <- reg1 | 65536 (big 0 mask) (arrive I05, I30) (so basically addition)
 I07 - reg1 <- 8725355
 I08 - reg5 <- reg2 & 255 (basically masks reg2 into reg5) (arrive I07, I27)
+    - Since 256 is a power of 2, x ^ 255 == x % 256
 I09 - reg1 += reg5 (now 14)
 I10 - reg1 <- reg1 & 16777215 (another big ol' mask) (so 7 still)
+    - As above, this is the same as reg1 % 16_777_216 (TWENTY_FOUR_ONES + 1)
 I11 - reg1 *= 65899 (now 461293)
 I12 - reg1 <- reg1 & 16777215 (same as I10)
 
@@ -68,5 +70,13 @@ And so I can continue to refactor and make sure my code is still right
 And then I can even refactor things like reg0 == reg1 into something like
   [what reg1 represents] == randomstarterreg0
 
- Or maybe what I said before but composing it even more sensible smaller ones like
- `def mod256(n): return n % 256` or `lambda x: x%256`
+Or maybe what I said before but composing it even more sensible smaller ones like
+  `def mod256(n): return n % 256` or `lambda x: x%256`
+
+Oh it's confusing
+I think next I want to smallen up that innermost loop
+To give something like reg5 = reg2 / 512
+But that's not quite right
+Because there's that extra 256 in there
+And...it's something like SomeConstant * (reg2 / 512)
+And maybe there's an addition of a constant in there
