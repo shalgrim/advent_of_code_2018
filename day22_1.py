@@ -1,3 +1,6 @@
+TARGET_X = 12
+TARGET_Y = 757
+CAVE_DEPTH = 3198
 from enum import Enum
 
 
@@ -28,8 +31,6 @@ class Region(object):
         self.cave = cave
         self.geologic_index = 0
         self.calc_geologic_index()
-        self.erosion_level = 0
-        self.calc_erosion_level()
         self.type = -1
         self.determine_type()
 
@@ -49,9 +50,9 @@ class Region(object):
             )
         return self.geologic_index
 
-    def calc_erosion_level(self):
-        self.erosion_level = (self.geologic_index + self.cave.depth) % 20183
-        return self.erosion_level
+    @property
+    def erosion_level(self):
+        return (self.geologic_index + self.cave.depth) % 20183
 
     def determine_type(self):
         self.type = self.erosion_level % 3
@@ -79,8 +80,5 @@ def calc_risk_level(target_x, target_y, cave):
 
 
 if __name__ == '__main__':
-    target_x = 12
-    target_y = 757
-    cave_depth = 3198
-    cave = build_cave(target_x, target_y, cave_depth)
-    print(f'answer: {calc_risk_level(target_x, target_y, cave)}')
+    cave = build_cave(TARGET_X, TARGET_Y, CAVE_DEPTH)
+    print(f'answer: {calc_risk_level(TARGET_X, TARGET_Y, cave)}')
