@@ -1,13 +1,27 @@
+from enum import Enum, auto
+
 TARGET_X = 12
 TARGET_Y = 757
 CAVE_DEPTH = 3198
-from enum import Enum
 
 
-class Type(Enum):
+class RegionType(Enum):
     ROCKY = 0
     WET = 1
     NARROW = 2
+
+
+class Equipment(Enum):
+    NO = auto()
+    CLIMB = auto()
+    TORCH = auto()
+
+
+class Direction(Enum):
+    UP = auto()
+    RIGHT = auto()
+    DOWN = auto()
+    LEFT = auto()
 
 
 class Cave(object):
