@@ -23,13 +23,25 @@ def main21_1(program_filename):
 
 def run_program(instructions, instruction_pointer, initial_registers):
     registers = copy(initial_registers)
+    prev_halter = None
+    halters = set()
+    ctr = 0
 
     while 0 <= registers[instruction_pointer] < len(instructions):
         instruction = instructions[registers[instruction_pointer]]
         opcode = getattr(opcodes, instruction[0])
         registers = opcode(registers, *instruction[1:])
-        if registers[instruction_pointer] == 28 and 4682012 < registers[1] < 10345242:
-            print(registers[1])
+        if registers[instruction_pointer] == 28:  # and registers[1] < 10345242:
+            if ctr % 10 == 0:
+                print(ctr)
+            ctr += 1
+            # print(registers[1])
+            if registers[1] in halters:
+                print(prev_halter)
+                break
+            prev_halter = registers[1]
+            halters.add(registers[1])
+
         registers[instruction_pointer] += 1
     print('ending')
 
@@ -39,4 +51,5 @@ if __name__ == '__main__':
     # 7282971 is incorrect =(
     # 16485525 is too high
     # 10345242 is too high
-    # so it has to be somewhere 4_682_012 <= x < 10_345_242
+    # so it has to be somewhere 10_345_242
+    # 438 is incorrect

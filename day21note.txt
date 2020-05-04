@@ -92,3 +92,33 @@ So next we will have to
 2) use that calculation to calculate reg1 after each I08 loop
 2a) It's N + 1 times that big_fat_one runs where N is the full number of 256's in there
 2b) But note that each of those N+1 times produces a different number since the inputs reg1 and reg2 will be different every time
+
+NB we have 256 ^ 1, 256 ^ 2, and 256 ^ 3 all in play here
+
+For my answer to day 1, when reg0 starts at 4_682_012
+The path reg1 takes is:
+  - 8_725_355 (BIG_RANDO)
+    - assigned...pre any call to big fat one
+  - 3_422_393
+    - call0 of big fat one, pre inside loop
+    - r1, r2 == 8,725,355, 65,536 (BIG_RANDO, 256 ** 2)
+    - works out to be BIG_RANDO (r1) * SMALL_RANDO % (2 ** 24)
+  - 12_938_835
+    - r1, r2 == 3,422,393, 256 (prev assignment, 256 ** 1)
+    - ends up being (r1 * SMALL_RANDO) % (2 ** 24)...again (kind of)
+    - but it's a big number this time
+  - 4_682_012
+    - r1, r2 == 12_938_835, 1
+    - this time it's not (r1 * SMALL_RANDO) % (2 ** 24) but ((r1  + 1) * SMALL_RANDO) % (2 ** 24) because r2 is 1 leaving the addition of 1 there
+So it's not even moving in the same direction there
+
+So let's see if I can go from BIG_RANDO and SMALL_RANDO and figure out how to get to 4_682_012
+You know you'll go through the outer loop just once
+So it always starts off like this
+reg2 <- 256 ** 2
+reg1 <- BIG_RANDO
+reg1 <- 3_422_393 ((reg1 * SMALL_RANDO) % (256 ** 3))
+reg2 <- 256 ** 1
+reg1 <- 12_938_835 ((reg1 * SMALL_RANDO) % (256 ** 3))
+reg2 <- 256 ** 0
+reg1 <- 4_682_012 (((reg1 + 1) * SMALL_RANDO) % (256 ** 3))
