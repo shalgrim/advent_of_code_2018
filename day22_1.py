@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 
 TARGET_X = 12
 TARGET_Y = 757
@@ -9,19 +9,6 @@ class RegionType(Enum):
     ROCKY = 0
     WET = 1
     NARROW = 2
-
-
-class Equipment(Enum):
-    NO = auto()
-    CLIMB = auto()
-    TORCH = auto()
-
-
-class Direction(Enum):
-    UP = auto()
-    RIGHT = auto()
-    DOWN = auto()
-    LEFT = auto()
 
 
 class Cave(object):
@@ -45,8 +32,6 @@ class Region(object):
         self.cave = cave
         self.geologic_index = 0
         self.calc_geologic_index()
-        self.type = -1
-        self.determine_type()
 
     def calc_geologic_index(self):
         if self.x == 0 and self.y == 0:
@@ -68,9 +53,9 @@ class Region(object):
     def erosion_level(self):
         return (self.geologic_index + self.cave.depth) % 20183
 
-    def determine_type(self):
-        self.type = self.erosion_level % 3
-        return self.type
+    @property
+    def tipe(self):
+        return self.erosion_level % 3
 
 
 def build_cave(target_x, target_y, depth):
@@ -89,7 +74,7 @@ def calc_risk_level(target_x, target_y, cave):
     risk_level = 0
     for x in range(target_x + 1):
         for y in range(target_y + 1):
-            risk_level += cave[(x, y)].type
+            risk_level += cave[(x, y)].tipe
     return risk_level
 
 

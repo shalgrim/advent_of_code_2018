@@ -1,4 +1,20 @@
 from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, build_cave
+from enum import Enum, auto
+
+from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, RegionType, build_cave
+
+
+class Equipment(Enum):
+    NO = auto()
+    CLIMB = auto()
+    TORCH = auto()
+
+
+class Direction(Enum):
+    UP = auto()
+    RIGHT = auto()
+    DOWN = auto()
+    LEFT = auto()
 
 
 class PathFinder:
