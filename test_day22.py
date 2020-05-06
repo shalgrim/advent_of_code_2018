@@ -1,3 +1,4 @@
+import sys
 from unittest import TestCase
 
 from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, build_cave, calc_risk_level
@@ -19,7 +20,8 @@ class TestDay22(TestCase):
         self.assertEqual(calc_risk_level(TARGET_X, TARGET_Y, self.actual_cave), 9659)
 
     def test_part_two(self):
-        pf = PathFinder(self.test_cave)
-        self.assertEqual(pf.find_quickest_path(TARGET_X, TARGET_Y), 45)
+        pf = PathFinder(self.test_cave, TEST_TARGET_X, TEST_TARGET_Y)
+        pf.find_quickest_path()
+        self.assertEqual(pf.known_shortest_path, 45)
         # pf = PathFinder(self.actual_cave)
-        # self.assertEqual(pf.find_quickest_path(TARGET_X, TARGET_Y), 0)  # don't have this yet
+        # self.assertEqual(pf.find_quickest_path(TARGET_X, TARGET_Y), 0)  # don't have this answer yet

@@ -19,7 +19,11 @@ class Cave(object):
         self.regions = {}
 
     def __getitem__(self, item):
-        return self.regions[item]
+        try:
+            return self.regions[item]
+        except KeyError:
+            self.regions[item] = Region(item[0], item[1], self)
+            return self.regions[item]
 
     def __setitem__(self, key, value):
         self.regions[key] = value
