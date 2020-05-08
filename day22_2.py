@@ -22,6 +22,35 @@ logging.basicConfig(
 logger.addHandler(StreamHandler(sys.stdout))
 
 
+BREAK_STATES = [
+    (0, 0),
+    (0, 1),
+    (1, 1),
+    (2, 1),
+    (3, 1),
+    (4, 1),
+    (4, 2),
+    (4, 3),
+    (4, 4),
+    (4, 5),
+    (4, 6),
+    (4, 7),
+    (4, 8),
+    (5, 8),
+    (5, 9),
+    (5, 10),
+    (5, 11),
+    (6, 11),
+    (6, 12),
+    (7, 12),
+    (8, 12),
+    (9, 12),
+    (10, 12),
+    (10, 11),
+    (10, 10),
+]
+
+
 class Equipment(Enum):
     NO = auto()
     CLIMB = auto()
@@ -68,7 +97,7 @@ class State:
         else:
             raise Exception('should not be here')
 
-        return next_position if next_position not in self.visited else False
+        return next_position  # if next_position not in self.visited else False
 
 
 class PathFinder:
@@ -122,11 +151,21 @@ class PathFinder:
         fromx, fromy = state.position
         tox, toy = self.target_position
 
-        horizontal = [Direction.RIGHT, Direction.LEFT] if tox - fromx > 0 else [Direction.LEFT, Direction.RIGHT]
-        vertical = [Direction.DOWN, Direction.UP] if toy - fromy > 0 else [Direction.UP, Direction.DOWN]
+        horizontal = (
+            [Direction.RIGHT, Direction.LEFT]
+            if tox - fromx > 0
+            else [Direction.LEFT, Direction.RIGHT]
+        )
+        vertical = (
+            [Direction.DOWN, Direction.UP]
+            if toy - fromy > 0
+            else [Direction.UP, Direction.DOWN]
+        )
         answer = []
 
-        if abs(tox - fromx) > abs(toy - fromy):  # further on x-axis so put horizontal in first
+        if abs(tox - fromx) > abs(
+            toy - fromy
+        ):  # further on x-axis so put horizontal in first
             answer = [horizontal[0], vertical[0], vertical[1], horizontal[1]]
         else:
             answer = [vertical[0], horizontal[0], horizontal[1], vertical[1]]
@@ -140,6 +179,11 @@ class PathFinder:
             else state
         )
         logger.debug(f'{state.position=} {state.cost=}')
+
+        if state.position in BREAK_STATES:
+            pindex = BREAK_STATES.index(state.position)
+            if BREAK_STATES[: pindex + 1] == state.visited:
+                logger.info(f'{state.position=} {state.cost=}')
 
         if state.position == self.target_position:
             final_cost = (
@@ -158,6 +202,9 @@ class PathFinder:
 
         distances = []
 
+        if str(state) == '(2, 1),Equipment.NO':
+            logger.debug('what happens here')
+
         for d in self.get_direction_order(state):
             next_position = state.get_next_position(d)
             if not next_position:
@@ -168,6 +215,8 @@ class PathFinder:
 
         actual_distances = [d for d in distances if d]
         if actual_distances:
+            if str(state) == '(2, 1),Equipment.NO':
+                logger.debug('how is shortest')
             shortest = min(actual_distances)
             self.shortest_froms[str(state)] = shortest
             return shortest
