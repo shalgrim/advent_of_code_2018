@@ -108,6 +108,21 @@ class PathFinder:
 
         return nextstate
 
+    def get_direction_order(self, state):
+        fromx, fromy = state.position
+        tox, toy = self.target_position
+
+        horizontal = [Direction.RIGHT, Direction.LEFT] if tox - fromx > 0 else [Direction.LEFT, Direction.RIGHT]
+        vertical = [Direction.DOWN, Direction.UP] if toy - fromy > 0 else [Direction.UP, Direction.DOWN]
+        answer = []
+
+        if abs(tox - fromx) > abs(toy - fromy):  # further on x-axis so put horizontal in first
+            answer = [horizontal[0], vertical[0], vertical[1], horizontal[1]]
+        else:
+            answer = [vertical[0], horizontal[0], horizontal[1], vertical[1]]
+
+        return answer
+
     def find_quickest_path(self, state=None):
         state = (
             State(position=(0, 0), equipment=Equipment.TORCH, visited=[(0, 0)], cost=0)
@@ -126,7 +141,7 @@ class PathFinder:
         if state.cost >= self.known_shortest_path:
             return
 
-        for d in Direction:
+        for d in self.get_direction_order(state):
             next_position = state.get_next_position(d)
             if not next_position:
                 continue
