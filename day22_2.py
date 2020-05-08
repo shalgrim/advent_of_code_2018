@@ -1,3 +1,9 @@
+"""
+This ran overnight and came up with a best of like 52 (it was still running)
+I think what's next is to start recording what the best cost is from each point so we're not re-doing these where we
+know it can't get better
+"""
+
 import logging
 import sys
 from copy import deepcopy
@@ -9,7 +15,7 @@ from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, RegionType, build_cave
 logger = logging.getLogger('advent_of_code_2018.day22_2')
 logging.basicConfig(
     filename='day22_2.log',
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
 )
@@ -43,6 +49,9 @@ class State:
         self.visited = visited
         self.cost = cost
 
+    def __str__(self):
+        return f'{self.position},{self.equipment}'
+
     def get_next_position(self, direction):
         if direction == Direction.UP:
             if self.position[1] == 0:
@@ -68,6 +77,7 @@ class PathFinder:
         self.target_position = target_x, target_y
         self.known_shortest_path = None
         self._set_baseline_shortest_path()
+        self.shortest_froms = {}
 
     def get_possible_equipment(self, x, y):
         region_type = self.cave[(x, y)].tipe
@@ -138,8 +148,15 @@ class PathFinder:
             if final_cost < self.known_shortest_path:
                 self.known_shortest_path = final_cost
 
+            return final_cost
+
+        if str(state) in self.shortest_froms:
+            return state.cost + self.shortest_froms[str(state)]
+
         if state.cost >= self.known_shortest_path:
             return
+
+        distances = []
 
         for d in self.get_direction_order(state):
             next_position = state.get_next_position(d)
@@ -147,7 +164,15 @@ class PathFinder:
                 continue
 
             nextstate = self.get_move_state(state, next_position)
-            self.find_quickest_path(nextstate)
+            distances.append(self.find_quickest_path(nextstate))
+
+        actual_distances = [d for d in distances if d]
+        if actual_distances:
+            shortest = min(actual_distances)
+            self.shortest_froms[str(state)] = shortest
+            return shortest
+        else:
+            return
 
     def _set_baseline_shortest_path(self):
         """go straight there, down then right"""
