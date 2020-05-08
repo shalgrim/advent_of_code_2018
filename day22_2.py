@@ -1,7 +1,19 @@
-from copy import copy
+import logging
+import sys
+from copy import deepcopy
 from enum import Enum, auto
+from logging import StreamHandler
 
 from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, RegionType, build_cave
+
+logger = logging.getLogger('advent_of_code_2018.day22_2')
+logging.basicConfig(
+    filename='day22_2.log',
+    level=logging.DEBUG,
+    format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S',
+)
+logger.addHandler(StreamHandler(sys.stdout))
 
 
 class Equipment(Enum):
@@ -24,13 +36,36 @@ POSSIBLE_EQUIPMENT = {
 }
 
 
+class State:
+    def __init__(self, position, equipment, visited, cost):
+        self.position = position
+        self.equipment = equipment
+        self.visited = visited
+        self.cost = cost
+
+    def get_next_position(self, direction):
+        if direction == Direction.UP:
+            if self.position[1] == 0:
+                return False
+            next_position = self.position[0], self.position[1] - 1
+        elif direction == Direction.RIGHT:
+            next_position = self.position[0] + 1, self.position[1]
+        elif direction == Direction.DOWN:
+            next_position = self.position[0], self.position[1] + 1
+        elif direction == Direction.LEFT:
+            if self.position[0] == 0:
+                return False
+            next_position = self.position[0] - 1, self.position[1]
+        else:
+            raise Exception('should not be here')
+
+        return next_position if next_position not in self.visited else False
+
+
 class PathFinder:
     def __init__(self, cave, target_x, target_y):
         self.cave = cave
-        self.current_path_length = 0
-        self.current_position = 0, 0
         self.target_position = target_x, target_y
-        self.current_equipment = Equipment.TORCH
         self.known_shortest_path = None
         self._set_baseline_shortest_path()
 
@@ -38,69 +73,84 @@ class PathFinder:
         region_type = self.cave[(x, y)].tipe
         return POSSIBLE_EQUIPMENT[RegionType(region_type)]
 
-    def _get_next_position(self, direction):
-        if direction == Direction.UP:
-            if self.current_position[1] == 0:
-                return False
-            return self.current_position[0], self.current_position[1] - 1
-        elif direction == Direction.RIGHT:
-            return self.current_position[0] + 1, self.current_position[1]
-        elif direction == Direction.DOWN:
-            return self.current_position[0], self.current_position[1] + 1
-        elif direction == Direction.LEFT:
-            if self.current_position[0] == 0:
-                return False
-            return self.current_position[0] - 1, self.current_position[1]
-        else:
-            raise Exception('should not be here')
+    def get_move_equipment(self, state, to_position):
+        assert (
+            state.position[0] == to_position[0]
+            and abs(state.position[1] - to_position[1]) == 1
+        ) or (
+            state.position[1] == to_position[1]
+            and abs(state.position[0] - to_position[0]) == 1
+        ), f"can't move from {state.position=} to {to_position=}"
 
-    def move(self, next_position):
-        current_region_type = self.cave[self.current_position].tipe
-        next_region_type = self.cave[next_position].tipe
-        possible_equipment = self.get_possible_equipment(
-            *self.current_position
-        ).intersection((self.get_possible_equipment(*next_position)))
-        if self.current_equipment in possible_equipment:
-            move_cost = 1
-        else:
-            self.current_equipment = possible_equipment.pop()
-            move_cost = 8
+        from_type = RegionType(self.cave[state.position].tipe)
+        to_type = RegionType(self.cave[to_position].tipe)
 
-        self.current_position = next_position
+        if from_type == to_type:
+            return state.equipment
 
-        return move_cost
+        solution_equipment = POSSIBLE_EQUIPMENT[from_type].intersection(
+            POSSIBLE_EQUIPMENT[to_type]
+        )
+        if solution_equipment and state.equipment in solution_equipment:
+            return state.equipment
 
-    def find_quickest_path(self, cost=0, visited=None):
-        myvisited = copy(visited) if visited is not None else []
-        myvisited.append(self.current_position)
-        if self.current_position == self.target_position:
-            final_cost = cost if self.current_equipment == Equipment.TORCH else cost + 7
+        return solution_equipment.pop()
+
+    def get_move_state(self, existing_state, next_position):
+        next_equipment = self.get_move_equipment(existing_state, next_position)
+        next_cost = 1 if next_equipment == existing_state.equipment else 8
+
+        nextstate = deepcopy(existing_state)
+        nextstate.position = next_position
+        nextstate.equipment = next_equipment
+        nextstate.cost += next_cost
+        nextstate.visited.append(next_position)
+
+        return nextstate
+
+    def find_quickest_path(self, state=None):
+        state = (
+            State(position=(0, 0), equipment=Equipment.TORCH, visited=[(0, 0)], cost=0)
+            if state is None
+            else state
+        )
+        logger.debug(f'{state.position=} {state.cost=}')
+
+        if state.position == self.target_position:
+            final_cost = (
+                state.cost if state.equipment == Equipment.TORCH else state.cost + 7
+            )
             if final_cost < self.known_shortest_path:
                 self.known_shortest_path = final_cost
-            return final_cost
 
-        if cost >= self.known_shortest_path:
+        if state.cost >= self.known_shortest_path:
             return
 
         for d in Direction:
-            next_position = self._get_next_position(d)
-            if not next_position or next_position in myvisited:
-                return False
+            next_position = state.get_next_position(d)
+            if not next_position:
+                continue
 
-            move_cost = self.move(next_position)
-            self.find_quickest_path(cost + move_cost, myvisited)
+            nextstate = self.get_move_state(state, next_position)
+            self.find_quickest_path(nextstate)
 
     def _set_baseline_shortest_path(self):
         """go straight there, down then right"""
-        cost = 0
-        while self.current_position[0] < self.target_position[0]:
-            cost += self.move(self._get_next_position(Direction.RIGHT))
-        while self.current_position[1] < self.target_position[1]:
-            cost += self.move(self._get_next_position(Direction.DOWN))
+        state = State(
+            position=(0, 0), equipment=Equipment.TORCH, visited=[(0, 0)], cost=0
+        )
 
-        self.current_position = 0, 0
+        while state.position[0] < self.target_position[0]:
+            state = self.get_move_state(
+                state, (state.position[0] + 1, state.position[1])
+            )
 
-        self.known_shortest_path = cost
+        while state.position[1] < self.target_position[1]:
+            state = self.get_move_state(
+                state, (state.position[0], state.position[1] + 1)
+            )
+
+        self.known_shortest_path = state.cost
 
 
 def main():
