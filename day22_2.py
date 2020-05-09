@@ -50,6 +50,37 @@ BREAK_STATES = [
     (10, 10),
 ]
 
+HAPPY_PATH_STATES = [
+    '(0, 0),Equipment.TORCH',
+    '(0, 1),Equipment.TORCH',
+    '(1, 1),Equipment.TORCH',
+    '(1, 1),Equipment.NO',  # *switch, not recorded
+    '(2, 1),Equipment.NO',
+    '(3, 1),Equipment.NO',
+    '(4, 1),Equipment.NO',
+    '(4, 1),Equipment.CLIMB',  # *switch, not recorded
+    '(4, 2),Equipment.CLIMB',
+    '(4, 3),Equipment.CLIMB',
+    '(4, 4),Equipment.CLIMB',
+    '(4, 5),Equipment.CLIMB',
+    '(4, 6),Equipment.CLIMB',
+    '(4, 7),Equipment.CLIMB',
+    '(4, 8),Equipment.CLIMB',
+    '(5, 8),Equipment.CLIMB',
+    '(5, 9),Equipment.CLIMB',
+    '(5, 10),Equipment.CLIMB',
+    '(5, 11),Equipment.CLIMB',
+    '(6, 11),Equipment.CLIMB',
+    '(6, 12),Equipment.CLIMB',
+    '(7, 12),Equipment.CLIMB',
+    '(8, 12),Equipment.CLIMB',
+    '(9, 12),Equipment.CLIMB',
+    '(10, 12),Equipment.CLIMB',
+    '(10, 11),Equipment.CLIMB',
+    '(10, 10),Equipment.CLIMB',
+    '(10, 10),Equipment.TORCH',  # *switch, but a weird one
+]
+
 
 class Equipment(Enum):
     NO = auto()
