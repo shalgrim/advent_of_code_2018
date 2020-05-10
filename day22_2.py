@@ -209,24 +209,19 @@ class PathFinder:
             if state is None
             else state
         )
-        logger.debug(f'{state.position=} {state.cost=}')
-
-        if state.position in BREAK_STATES:
-            pindex = BREAK_STATES.index(state.position)
-            if BREAK_STATES[: pindex + 1] == state.visited:
-                logger.info(f'{state.position=} {state.cost=}')
 
         if state.position == self.target_position:
-            final_cost = (
-                state.cost if state.equipment == Equipment.TORCH else state.cost + 7
-            )
+            final_switch_cost = 0 if state.equipment == Equipment.TORCH else 7
+            final_cost = final_switch_cost + state.cost
             if final_cost < self.known_shortest_path:
                 self.known_shortest_path = final_cost
 
-            return final_cost
+            return final_switch_cost
 
         if str(state) in self.shortest_froms:
-            return state.cost + self.shortest_froms[str(state)]
+            if state.cost + self.shortest_froms[str(state)] < self.known_shortest_path:
+                self.known_shortest_path = state.cost + self.shortest_froms[str(state)]
+            return self.shortest_froms[str(state)]
 
         if state.cost >= self.known_shortest_path:
             return
@@ -242,12 +237,11 @@ class PathFinder:
             total_cost_for_next = self.find_quickest_path(nextstate)
 
             if total_cost_for_next is not None:
-                distances.append(self.find_quickest_path(nextstate) - state.cost)
+                quickest = self.find_quickest_path(nextstate)
+                step_cost = 1 if state.equipment == nextstate.equipment else 8
+                distances.append(quickest + step_cost)
 
-        # actual_distances = [d for d in distances if d]
         if distances:
-            if str(state) == '(2, 1),Equipment.NO':
-                logger.debug('how is shortest')
             shortest = min(distances)
             self.shortest_froms[str(state)] = shortest
             return shortest

@@ -58,3 +58,37 @@ Problem:
 - Consider `distances.append(self.find_quickest_path(nextstate) - state.cost)`
 - I'll try that and see what test cases it messes up
 - Hm, it's still that `test_case_base_minus_7` breaks, so keep looking into that
+- It correctly finds many shortests
+- Including as close as 7,12climb...with a distance of 12
+- But then it goes and assigns 6,11climb a distance of 28
+- Which this gets by switching to torch then going to 7,11 torch where the distance is 20
+- notably there's not a single exploration of (6, 12), regardless of equipment
+- distances is only [28, 33]...I'm not surprised that left would come back with nothing
+- but why does Down return nothing?
+- it gets 28 from RIGHT and 33 from UP
+- so going down...
+  - it gets to 8,12 and finds a shortest of 11 so returns 14...that's correct
+  - and 12 gets assigned as the shortest for 7,12climb...that's correct
+  - and then it _returns_ 12, which I think might be a problem
+- boy, i should never be returning final cost
+- ugh, but it still breaks in the same place
+- somehow from 6,11climb it gets as distances for right, up, down, and left [66, 100, 71, 95]
+- it goes right first, does some stuff, then assigns 7 as shortest for 10,11climb (but it should be 8)
+- fixed that bug and it _still_ breaks in the same place, coming back with an answer of 33 when it should be 14
+
+```py
+problem:
+self.shortest_froms['(10, 11),Equipment.CLIMB']
+8
+self.shortest_froms['(10, 12),Equipment.CLIMB']
+42
+```
+
+- fixed that, but having the same problem
+- getting frustrated
+- well now self.shortest_froms['(6, 11),Equipment.CLIMB'] is the correct answer, and it's returning the right answer
+- but it's not storing the right answer in self.shortest_known_path
+- (and i checked if i could just ignore that and still be good by using the return value for the test for the whole thing and that wasn't the case)
+- (but it was correct for the minus 8 test case too)
+- this bug is happening b/c it only calculates the shortest_known when it's in the terminal position
+- and it can really also calculate it if current cost plus known shortest from is less

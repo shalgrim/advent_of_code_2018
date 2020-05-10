@@ -13,7 +13,7 @@ class TestDay22(TestCase):
         self.actual_cave = build_cave(TARGET_X, TARGET_Y, CAVE_DEPTH)
         self.test_cave = build_cave(TEST_TARGET_X, TEST_TARGET_Y, TEST_CAVE_DEPTH)
 
-    @skip
+    # @skip
     def test_part_one(self):
         self.assertEqual(
             calc_risk_level(TEST_TARGET_X, TEST_TARGET_Y, self.test_cave), 114
@@ -74,7 +74,7 @@ class TestDay22(TestCase):
         pf.find_quickest_path(state)
         self.assertEqual(pf.known_shortest_path, 15)
 
-    @skip("not ready")
+    # @skip("not ready")
     def test_part_two(self):
         pf = PathFinder(self.test_cave, TEST_TARGET_X, TEST_TARGET_Y)
         pf.find_quickest_path()
