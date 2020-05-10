@@ -233,22 +233,22 @@ class PathFinder:
 
         distances = []
 
-        if str(state) == '(2, 1),Equipment.NO':
-            logger.debug('what happens here')
-
         for d in self.get_direction_order(state):
             next_position = state.get_next_position(d)
             if not next_position:
                 continue
 
             nextstate = self.get_move_state(state, next_position)
-            distances.append(self.find_quickest_path(nextstate))
+            total_cost_for_next = self.find_quickest_path(nextstate)
 
-        actual_distances = [d for d in distances if d]
-        if actual_distances:
+            if total_cost_for_next is not None:
+                distances.append(self.find_quickest_path(nextstate) - state.cost)
+
+        # actual_distances = [d for d in distances if d]
+        if distances:
             if str(state) == '(2, 1),Equipment.NO':
                 logger.debug('how is shortest')
-            shortest = min(actual_distances)
+            shortest = min(distances)
             self.shortest_froms[str(state)] = shortest
             return shortest
         else:

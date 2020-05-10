@@ -37,3 +37,24 @@ Problem:
 - I feel like it has to be a `shortest_from` gets set wrong
 - Yep, `shortest_froms['(8, 12),Equipment.CLIMB']` is set to 137
 - So next in to test this test case and figure out why that gets set the way it does even though `test_case_base_minus_4` succeeds
+- setting breakpoints and testing `test_case_base_minus_7`
+- The first time through the four direction loop where the String is `'(8, 12),Equipment.CLIMB'`, distances is a list of four Nones so no shortest gets sent
+- The second time through distances is a list of 137 and then three Nones
+- The first direction, the one where it finds 137, is UP
+- So I could either explore the problem the first time through or the second time through
+- The first time problem: Why does it find no path when going RIGHT?
+- The second time problem: Why does it find such a long path when going UP but only that one?
+- I think it's better to deal with the first time problem, since, I think, it should find a path there
+- Looking into that now
+- (9, 12) is not in the visited path
+- well, just the first time it gets to a state of '(8, 12),Equipment.CLIMB', the value of self.shortest_froms['(10, 11),Equipment.CLIMB'] is 39
+- which is nuts (should be eight)
+- so let's see what happens the first time it gets to that state
+- It goes up to (10, 10) first thing
+- And there it sets final_cost to 33 and returns final_cost
+- And so then the shortest from for the state gets set to 33 (must get reset to 39 later)
+  - Also curious here is how it also finds no path going DOWN...i guess it's just longer than longest_known path
+- So I still have an unruly mix of final cost and incremental cost messing me up
+- Consider `distances.append(self.find_quickest_path(nextstate) - state.cost)`
+- I'll try that and see what test cases it messes up
+- Hm, it's still that `test_case_base_minus_7` breaks, so keep looking into that
