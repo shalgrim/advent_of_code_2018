@@ -67,7 +67,7 @@ class PathState:
 
         for d in Direction:
             next_pos = self.get_next_pos(d)
-            if not next_pos:
+            if not next_pos or next_pos in self.nodes:
                 continue
             from_type = RegionType(cave[self.current_pos].tipe)
             to_type = RegionType(cave[next_pos].tipe)

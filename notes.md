@@ -130,3 +130,4 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - why doesn't PyCharm do the thing I'm telling it to
 - fine, I think I'm giving up on this...for now...I wish PyCharm would do what it says it does
 - and basecase-6 works it just takes 20 m 45 s =(
+- ... oh not letting paths re-visit nodes has gotten things down under 3 s
