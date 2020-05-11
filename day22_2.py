@@ -6,16 +6,17 @@ know it can't get better
 
 import logging
 import sys
+from collections import defaultdict
 from copy import deepcopy
 from enum import Enum, auto
 from logging import StreamHandler
 
-from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, RegionType, build_cave
+from day22_1 import CAVE_DEPTH, TARGET_X, TARGET_Y, Equipment, RegionType, build_cave
 
 logger = logging.getLogger('advent_of_code_2018.day22_2')
 logging.basicConfig(
     filename='day22_2.log',
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(levelname) -10s %(asctime)s %(module)s at line %(lineno)d: %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S',
 )
@@ -82,12 +83,6 @@ HAPPY_PATH_STATES = [
 ]
 
 
-class Equipment(Enum):
-    NO = auto()
-    CLIMB = auto()
-    TORCH = auto()
-
-
 class Direction(Enum):
     UP = auto()
     RIGHT = auto()
@@ -100,6 +95,23 @@ POSSIBLE_EQUIPMENT = {
     RegionType.WET: set([Equipment.CLIMB, Equipment.NO]),
     RegionType.NARROW: set([Equipment.TORCH, Equipment.NO]),
 }
+
+
+class KnownShortestTracker:
+    def __init__(self):
+        self.data = defaultdict(dict)
+
+    def get_known_shortest(self, state):
+        """returns best known lowest cost and incoming cost"""
+        return self.data[state.position].get(state.equipment)
+
+    def set_known_shortest(self, state, cost):
+        if self.data[state.position].get(state.equipment):
+            best_known, recorded_at = self.data[state.position].get(state.equipment)
+            if recorded_at > state.cost and cost < best_known:
+                self.data[state.position][state.equipment] = (cost, state.cost)
+        else:
+            self.data[state.position][state.equipment] = (cost, state.cost)
 
 
 class State:
@@ -137,7 +149,7 @@ class PathFinder:
         self.target_position = target_x, target_y
         self.known_shortest_path = None
         self._set_baseline_shortest_path()
-        self.shortest_froms = {}
+        self.shortest_froms = KnownShortestTracker()
 
     def get_possible_equipment(self, x, y):
         region_type = self.cave[(x, y)].tipe
@@ -218,10 +230,16 @@ class PathFinder:
 
             return final_switch_cost
 
-        if str(state) in self.shortest_froms:
-            if state.cost + self.shortest_froms[str(state)] < self.known_shortest_path:
-                self.known_shortest_path = state.cost + self.shortest_froms[str(state)]
-            return self.shortest_froms[str(state)]
+        if self.shortest_froms.get_known_shortest(state):
+            known_best, recorded_at = self.shortest_froms.get_known_shortest(state)
+        else:
+            known_best, recorded_at = None, None
+
+        if recorded_at and state.cost >= recorded_at:
+            if state.cost + known_best < self.known_shortest_path:
+                self.known_shortest_path = state.cost + known_best
+            return known_best
+        # implied else...if we're at a shorter incoming cost then we might get an even shorter one so keep going
 
         if state.cost >= self.known_shortest_path:
             return
@@ -243,7 +261,7 @@ class PathFinder:
 
         if distances:
             shortest = min(distances)
-            self.shortest_froms[str(state)] = shortest
+            self.shortest_froms.set_known_shortest(state, shortest)
             return shortest
         else:
             return

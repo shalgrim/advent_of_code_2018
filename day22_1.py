@@ -1,4 +1,7 @@
-from enum import Enum
+import logging
+from enum import Enum, auto
+
+logger = logging.getLogger('advent_of_code_2018.day22_1')
 
 TARGET_X = 12
 TARGET_Y = 757
@@ -9,6 +12,19 @@ class RegionType(Enum):
     ROCKY = 0
     WET = 1
     NARROW = 2
+
+
+class Equipment(Enum):
+    NO = auto()
+    CLIMB = auto()
+    TORCH = auto()
+
+
+POSSIBLE_EQUIPMENT = {
+    RegionType.ROCKY: set([Equipment.CLIMB, Equipment.TORCH]),
+    RegionType.WET: set([Equipment.CLIMB, Equipment.NO]),
+    RegionType.NARROW: set([Equipment.TORCH, Equipment.NO]),
+}
 
 
 class Cave(object):
@@ -22,11 +38,28 @@ class Cave(object):
         try:
             return self.regions[item]
         except KeyError:
+            logger.debug(f'{item=}')
             self.regions[item] = Region(item[0], item[1], self)
             return self.regions[item]
 
     def __setitem__(self, key, value):
         self.regions[key] = value
+
+    def get_move_cost(self, from_pos, to_pos, equipment):
+        from_type = RegionType(self[from_pos].tipe)
+        to_type = RegionType(self[to_pos].tipe)
+
+        if from_type == to_type:
+            return 1, equipment
+
+        solution_equipment = POSSIBLE_EQUIPMENT[from_type].intersection(
+            POSSIBLE_EQUIPMENT[to_type]
+        )
+
+        if equipment in solution_equipment:
+            return 1, equipment
+
+        return 8, solution_equipment.pop()
 
 
 class Region(object):

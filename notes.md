@@ -92,3 +92,40 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - (but it was correct for the minus 8 test case too)
 - this bug is happening b/c it only calculates the shortest_known when it's in the terminal position
 - and it can really also calculate it if current cost plus known shortest from is less
+- new failure: test_base_case_minus_10
+- again it's where the happy path move is DOWN
+- going that direction it comes back with 36 (should be 16 like previous test case)
+- and '(4, 11),Equipment.CLIMB' is not in self.shortest_froms, which is weird
+- 5,11climb is in there but it's 34 (at which point 36 makes sense)
+- 10,11climb and 10,12climb aren't in shortest_froms
+- the closest you ever get on the happy path is 7,12climb
+- so why does that one not make it to 8,12climb
+- (there is an 8,12torch in there (and 7,12torch))
+- i believe it is because it takes the "wrong" way to get there and then runs out of room before getting longer than the known shortest path so it gives up
+- so it should only record shortest_from if it gets all four distances back? either that or stop terminating if we've searched more than the known shortest path
+- If I try the latter I get max recursion depth
+- And trying the former makes things take too long...test_base_case_minus_04 takes 26 seconds
+  - and _06 doesn't seem to want to stop
+- Two ideas:
+  1) Solve above directly by storing four shortests, one for each direction...then you'd have to
+     1a) only stop searching if all four shortests are filled in
+     1b) only bother searching those where you don't have shortests
+  2) New idea entirely...fill in the surrounding values of shortest_from, like cycle around it...uff, but you wouldn't know if the shortest would actually be to go away from the target
+- okay new idea, you track shortest by incoming cost
+- so then if you come in with a lower cost, then you can re-search, else just take whatever is equal to or the next higher than your current cost for the known shortest
+- i implemented that, now to test it
+- that broke everything from test_base_case_minus_01 on
+- fixed that but now test_base_case_minus_02 takes 11s and still witing on test_base_case_minus_03
+- got overwhelmed, decided to create BFS search
+- it is ready to "test" (i.e., walkthrough)
+- tho it might be good to try to set up some happy path tets for that as well
+- yeah just trying to get base case working now
+- frig, I also can't get the damned base-case minus 3 to terminate for bfs
+- oh there it took 25 seconds, christ
+- let's try basecase6
+- that don't work
+- basecase4 also don't
+- but i'm getting some exception that I can't get PyCharm to stop on
+- nor can I get PyCharm to stop on the condition that the test is bailing on
+- why doesn't PyCharm do the thing I'm telling it to
+- fine, I think I'm giving up on this...for now...I wish PyCharm would do what it says it does
