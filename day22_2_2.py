@@ -151,7 +151,7 @@ class PathFinderBFS:
 
         return min(
             s.cost for s in solutions
-        )  # current bug, sometimes there are no solutions at this point
+        )
 
     def _calculate_baseline_path_cost(self, cave, initial_path=None):
         cost1 = 0
