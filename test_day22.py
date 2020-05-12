@@ -93,6 +93,128 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 13)
 
+    def test_part_two_base_case_07(self):
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=6,
+            initial_y=11,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 14)
+
+    def test_part_two_base_case_08(self):
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=5,
+            initial_y=11,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 15)
+
+    def test_part_two_base_case_09(self):
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=5,
+            initial_y=10,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 16)
+
+    def test_part_two_base_case_11(self):
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=5,
+            initial_y=8,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 18)
+
+    def test_part_two_base_case_12(self):  # 1m 47s
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=8,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 19)
+
+    def test_part_two_base_case_13(self):  # 2m 27s
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=7,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 20)
+
+    def test_part_two_base_case_14(self):  # 3m 22s
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=6,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 21)
+
+    def test_part_two_base_case_15(self):  # 8m 9s
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=5,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 22)
+
+    def test_part_two_base_case_16(self):  # 17m 26s...quite the big jump
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=4,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 23)
+
+    def test_part_two_base_case_19(self):  # takes over 20 minutes?
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=1,
+            initial_equip=Equipment.CLIMB,
+        )
+        self.assertEqual(pf.find_quickest_path(), 26)
+
+    def test_part_two_base_case_19_plus_switch(self):
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=4,
+            initial_y=1,
+            initial_equip=Equipment.NO,
+        )
+        self.assertEqual(pf.find_quickest_path(), 33)
+
+
 class TestDay22(TestCase):
     def setUp(self):
         self.actual_cave = build_cave(TARGET_X, TARGET_Y, CAVE_DEPTH)
@@ -157,18 +279,6 @@ class TestDay22(TestCase):
         state = State(position=(5, 11), equipment=Equipment.CLIMB, visited=[], cost=0)
         pf.find_quickest_path(state)
         self.assertEqual(pf.known_shortest_path, 15)
-
-    def test_base_case_minus_09(self):
-        pf = PathFinder(self.test_cave, TEST_TARGET_X, TEST_TARGET_Y)
-        state = State(position=(4, 11), equipment=Equipment.CLIMB, visited=[], cost=0)
-        pf.find_quickest_path(state)
-        self.assertEqual(pf.known_shortest_path, 16)
-
-    def test_base_case_minus_10(self):
-        pf = PathFinder(self.test_cave, TEST_TARGET_X, TEST_TARGET_Y)
-        state = State(position=(4, 10), equipment=Equipment.CLIMB, visited=[], cost=0)
-        pf.find_quickest_path(state)
-        self.assertEqual(pf.known_shortest_path, 17)
 
     # @skip("not ready")
     def test_part_two(self):

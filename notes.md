@@ -131,3 +131,11 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - fine, I think I'm giving up on this...for now...I wish PyCharm would do what it says it does
 - and basecase-6 works it just takes 20 m 45 s =(
 - ... oh not letting paths re-visit nodes has gotten things down under 3 s
+- well now BFS is going muuuuch better
+- but still basecase-13 took 2.5 minutes
+- so i still might put it down for a while
+- the only other idea i have at this point is to have paths wait, or tick, for seven passes after they move and change equipment
+- the benefit of that is the terminating condition is finding a single solution
+- i'm skeptical it will improve anything, but it might be worth a try
+- something has to give, because basecase-19 hasn't terminated in over 20 minutes
+- I'll put in some interim cases there to try to rule out bug or just taking too long
