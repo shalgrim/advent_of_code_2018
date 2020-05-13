@@ -139,3 +139,11 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - i'm skeptical it will improve anything, but it might be worth a try
 - something has to give, because basecase-19 hasn't terminated in over 20 minutes
 - I'll put in some interim cases there to try to rule out bug or just taking too long
+- ...
+- So my counting ticks version in this branch seems a little faster than exhausting bfs in the master branch
+- but it's still pretty slow
+- i have one more idea
+- as soon as any path has a position at the target position, you cull anything not with a manhattan distance of ticks remaining
+- and actually there may be some other culling to be going on...e.g., if any path is within one of target position, cull everything that's not within ticksremaing + 7
+- and if one is two away then ticksremaining + 14, ticksremaining + 21, etc.
+- so cut a new branch and try that kind of culling

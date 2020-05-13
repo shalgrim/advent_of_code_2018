@@ -18,10 +18,11 @@ logger.addHandler(StreamHandler(sys.stdout))
 
 
 class PathState:
-    def __init__(self, equipment=None, nodes=None, cost=0):
+    def __init__(self, equipment=None, nodes=None, cost=0, ticks_remaining=0):
         self.equipment = equipment
         self.nodes = deepcopy(nodes) if nodes else []
         self.cost = cost
+        self.ticks_remaining = ticks_remaining
 
     @property
     def current_x(self):
@@ -47,7 +48,13 @@ class PathState:
             return self.current_x + 1, self.current_y
         return None
 
-    def get_next_equipment(self, from_type, to_type):
+    def get_next_equipment(self, cave, next_pos):
+        from_type = RegionType(cave[self.current_pos].tipe)
+        to_type = RegionType(cave[next_pos].tipe)
+        next_equipment = self._get_next_equipment(from_type, to_type)
+        return next_equipment
+
+    def _get_next_equipment(self, from_type, to_type):
         if from_type == to_type:
             return self.equipment
 
@@ -63,20 +70,24 @@ class PathState:
         return solution_equipment.pop()  # there should be only one thing to switch to
 
     def get_new_paths(self, cave):
+        if self.ticks_remaining:
+            self.ticks_remaining -= 1
+            self.cost += 1
+            return [self]
+
         new_paths = []
 
         for d in Direction:
             next_pos = self.get_next_pos(d)
             if not next_pos or next_pos in self.nodes:
                 continue
-            from_type = RegionType(cave[self.current_pos].tipe)
-            to_type = RegionType(cave[next_pos].tipe)
-            next_equipment = self.get_next_equipment(from_type, to_type)
-            new_cost = 1 if next_equipment == self.equipment else 8
+
             new_nodes = copy(self.nodes)
             new_nodes.append(next_pos)
+            next_equipment = self.get_next_equipment(cave, next_pos)
+            ticks = 0 if next_equipment == self.equipment else 7
             new_path = PathState(
-                equipment=next_equipment, nodes=new_nodes, cost=self.cost + new_cost
+                equipment=next_equipment, nodes=new_nodes, cost=self.cost + 1, ticks_remaining=ticks
             )
             new_paths.append(new_path)
 
@@ -119,39 +130,43 @@ class PathFinderBFS:
         self.paths = reduced_paths
 
     def extract_solutions(self):
-        paths_to_continue = []
-        solutions = []
+        in_correct_position = [p for p in self.paths if p.current_pos == self.target_position]
 
-        for path in self.paths:
-            if path.current_pos == self.target_position:
-                if path.equipment != Equipment.TORCH:
-                    path.cost += 7
-                solutions.append(path)
-            else:
-                paths_to_continue.append(path)
+        for p in in_correct_position:
+            if not p.ticks_remaining and p.equipment != Equipment.TORCH:
+                p.equipment = Equipment.TORCH
+                p.ticks_remaining = 7
 
-        self.paths = paths_to_continue
-        return solutions
+        return [p for p in in_correct_position if not p.ticks_remaining]
 
     def find_quickest_path(self):
         solutions = self.extract_solutions()
-        while self.paths:
+        ticks = 0
+
+        while not solutions:
+            ticks += 1
             new_paths = []
             for path in self.paths:
                 new_paths += path.get_new_paths(self.cave)
 
             self.paths = new_paths
             self.reduce_paths()
-            solutions += self.extract_solutions()
+            solutions = self.extract_solutions()
             self.shortest_known_path = (
                 min(s.cost for s in solutions)
                 if solutions
                 else self.shortest_known_path
             )
 
-        return min(
-            s.cost for s in solutions
-        )
+        # if any(
+        #     solution for solution in solutions if solution.equipment == Equipment.TORCH
+        # ):
+        #     final_change_cost = 0
+        # else:
+        #     final_change_cost = 7
+        #
+        # return ticks + final_change_cost
+        return ticks
 
     def _calculate_baseline_path_cost(self, cave, initial_path=None):
         cost1 = 0
@@ -191,6 +206,9 @@ class PathFinderBFS:
                 )
                 cost1 += move_cost
 
+        if equipment != Equipment.TORCH:
+            cost1 += 7
+
         equipment = initial_equipment
 
         if self.target_position[1] >= initial_y:
@@ -211,6 +229,9 @@ class PathFinderBFS:
                 (x, y), (x + 1, y), equipment
             )
             cost2 += move_cost
+
+        if equipment != Equipment.TORCH:
+            cost2 += 7
 
         if initial_x == self.target_position[0]:
             return cost1

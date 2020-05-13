@@ -126,7 +126,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 16)
 
-    def test_part_two_base_case_11(self):
+    def test_part_two_base_case_11(self):  # 49s counting ticks
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -137,7 +137,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 18)
 
-    def test_part_two_base_case_12(self):  # 1m 47s
+    def test_part_two_base_case_12(self):  # 1m 47s vs 1m 27s counting ticks
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -148,7 +148,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 19)
 
-    def test_part_two_base_case_13(self):  # 2m 27s
+    def test_part_two_base_case_13(self):  # 2m 27s vs 2m 8s counting ticks
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
