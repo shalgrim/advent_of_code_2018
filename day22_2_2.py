@@ -158,14 +158,6 @@ class PathFinderBFS:
                 else self.shortest_known_path
             )
 
-        # if any(
-        #     solution for solution in solutions if solution.equipment == Equipment.TORCH
-        # ):
-        #     final_change_cost = 0
-        # else:
-        #     final_change_cost = 7
-        #
-        # return ticks + final_change_cost
         return ticks
 
     def _calculate_baseline_path_cost(self, cave, initial_path=None):
