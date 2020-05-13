@@ -126,7 +126,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 16)
 
-    def test_part_two_base_case_11(self):  # 49s counting ticks vs 2s with culling
+    def test_part_two_base_case_11(self):  # 49s counting ticks vs 2s with culling vs 5s with aggressive culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,

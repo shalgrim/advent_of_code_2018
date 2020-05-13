@@ -122,13 +122,15 @@ class PathFinderBFS:
         reduced_paths = []
         reduced_paths_uniqueifed = set()
 
-        paths_at_target = [p for p in self.paths if p.current_pos == self.target_position]
-        if paths_at_target:
+        closest = min(p.manhattan(self.target_position) for p in self.paths)
+        if closest:
             # cull
-            fewest_ticks_remaining = min(pat.ticks_remaining for pat in paths_at_target)
+            paths_at_closest = [p for p in self.paths if p.manhattan(self.target_position) == closest]
+            cull_over = closest * 7 + min(p.ticks_remaining for p in paths_at_closest)
+
             for path in self.paths:
                 md = path.manhattan(self.target_position)
-                if md > fewest_ticks_remaining or (md == 0 and path.ticks_remaining > fewest_ticks_remaining):
+                if md > cull_over:
                     continue
                 else:
                     if path.uniqueify() not in reduced_paths_uniqueifed:
