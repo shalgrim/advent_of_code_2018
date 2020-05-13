@@ -139,3 +139,24 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - i'm skeptical it will improve anything, but it might be worth a try
 - something has to give, because basecase-19 hasn't terminated in over 20 minutes
 - I'll put in some interim cases there to try to rule out bug or just taking too long
+- ...
+- So my counting ticks version in this branch seems a little faster than exhausting bfs in the master branch
+- but it's still pretty slow
+- i have one more idea
+- as soon as any path has a position at the target position, you cull anything not with a manhattan distance of ticks remaining
+- and actually there may be some other culling to be going on...e.g., if any path is within one of target position, cull everything that's not within ticksremaing + 7
+- and if one is two away then ticksremaining + 14, ticksremaining + 21, etc.
+- so cut a new branch and try that kind of culling
+- ...
+- I'm getting close to taking a pause on day 22
+- So a guide:
+  - `day22_2.py` is DFS
+  - `day22_2_2.py` is BFS
+  - in `master` I calculated cost and did an exhaustive BFS
+  - in `try-changing-over-ticks` I had paths wait seven ticks before moving if changing equipment and terminating condition was path arriving at destination with TORCH
+  - in `now-try-culling` I'm going to try one more thing where, once any path reaches destination, regardless of equipment, we cull out anybody more than a manhattan distance of 7 away
+- Well culling went quite well
+- But I believe it's still too slow for the real problem
+- Though maybe consider the more aggressive culling where you find the closest one by manhattan distance with fewest ticks_remaining
+- and then cull anything further than that manhattan_distance*7 + ticks_remaining
+- I think I should try that before taking a break

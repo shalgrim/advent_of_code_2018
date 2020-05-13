@@ -126,7 +126,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 16)
 
-    def test_part_two_base_case_11(self):
+    def test_part_two_base_case_11(self):  # 49s counting ticks vs 2s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -137,7 +137,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 18)
 
-    def test_part_two_base_case_12(self):  # 1m 47s
+    def test_part_two_base_case_12(self):  # 1m 47s vs 1m 27s counting ticks vs 3s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -148,7 +148,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 19)
 
-    def test_part_two_base_case_13(self):  # 2m 27s
+    def test_part_two_base_case_13(self):  # 2m 27s vs 2m 8s counting ticks vs 4s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -159,7 +159,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 20)
 
-    def test_part_two_base_case_14(self):  # 3m 22s
+    def test_part_two_base_case_14(self):  # 3m 22s vs 5s culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -170,7 +170,8 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 21)
 
-    def test_part_two_base_case_15(self):  # 8m 9s
+    def test_part_two_base_case_15(self):
+        # 8m 9s vs 9s culling here we go with the jumps...I wonder what happens at this case?
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -181,7 +182,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 22)
 
-    def test_part_two_base_case_16(self):  # 17m 26s...quite the big jump
+    def test_part_two_base_case_16(self):  # 17m 26s...quite the big jump vs 18s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -192,7 +193,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 23)
 
-    def test_part_two_base_case_19(self):  # takes over 20 minutes?
+    def test_part_two_base_case_19(self):  # takes over 20 minutes in exhaustive BFS? ... 60s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -203,7 +204,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 26)
 
-    def test_part_two_base_case_19_plus_switch(self):
+    def test_part_two_base_case_19_plus_switch(self):  # 1m 49s culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -213,6 +214,61 @@ class TestDay22BFS(TestCase):
             initial_equip=Equipment.NO,
         )
         self.assertEqual(pf.find_quickest_path(), 33)
+
+    def test_part_two_base_case_20(self):  # 2m 47s with culling
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=3,
+            initial_y=1,
+            initial_equip=Equipment.NO,
+        )
+        self.assertEqual(pf.find_quickest_path(), 34)
+
+    def test_part_two_base_case_22(self):  # 6m 30s with culling
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=1,
+            initial_y=1,
+            initial_equip=Equipment.NO,
+        )
+        self.assertEqual(pf.find_quickest_path(), 36)
+
+    def test_part_two_base_case_22_plus_switch(self):  # 7m 15s with culling
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=1,
+            initial_y=1,
+            initial_equip=Equipment.TORCH,
+        )
+        self.assertEqual(pf.find_quickest_path(), 43)
+
+    def test_part_two_base_case_23(self):  # 9m 3s with culling (one more tick added almost two minutes :sadface:)
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=0,
+            initial_y=1,
+            initial_equip=Equipment.TORCH,
+        )
+        self.assertEqual(pf.find_quickest_path(), 44)
+
+    def test_part_two_final(self):  # 10m 8s with culling
+        pf = PathFinderBFS(
+            self.test_cave,
+            TEST_TARGET_X,
+            TEST_TARGET_Y,
+            initial_x=0,
+            initial_y=0,
+            initial_equip=Equipment.TORCH,
+        )
+        self.assertEqual(pf.find_quickest_path(), 45)
 
 
 class TestDay22(TestCase):
