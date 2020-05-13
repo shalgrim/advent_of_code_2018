@@ -160,3 +160,5 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - Though maybe consider the more aggressive culling where you find the closest one by manhattan distance with fewest ticks_remaining
 - and then cull anything further than that manhattan_distance*7 + ticks_remaining
 - I think I should try that before taking a break
+- More aggressive culling slowed things down (see branch)
+- So now I should run overnight / on some other server and take a break or just take a break
