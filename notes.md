@@ -147,3 +147,12 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - and actually there may be some other culling to be going on...e.g., if any path is within one of target position, cull everything that's not within ticksremaing + 7
 - and if one is two away then ticksremaining + 14, ticksremaining + 21, etc.
 - so cut a new branch and try that kind of culling
+- ...
+- I'm getting close to taking a pause on day 22
+- So a guide:
+  - `day22_2.py` is DFS
+  - `day22_2_2.py` is BFS
+  - in `master` I calculated cost and did an exhaustive BFS
+  - in `try-changing-over-ticks` I had paths wait seven ticks before moving if changing equipment and terminating condition was path arriving at destination with TORCH
+  - in `now-try-culling` I'm going to try one more thing where, once any path reaches destination, regardless of equipment, we cull out anybody more than a manhattan distance of 7 away
+- 
