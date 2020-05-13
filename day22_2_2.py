@@ -116,6 +116,7 @@ class PathFinderBFS:
         self.shortest_known_path = self._calculate_baseline_path_cost(
             cave, self.paths[-1]
         )
+        logger.info(f'initializing {self.shortest_known_path=}')
 
     def reduce_paths(self):
         """Get rid of duplicate paths"""
@@ -161,6 +162,7 @@ class PathFinderBFS:
         ticks = 0
 
         while not solutions:
+            logger.info(f'completed {ticks=}')
             ticks += 1
             new_paths = []
             for path in self.paths:
@@ -247,6 +249,9 @@ class PathFinderBFS:
 
 def main():
     cave = build_cave(TARGET_X, TARGET_Y, CAVE_DEPTH)
-    pf = PathFinderBFS()
-    qp = pf.find_quickest_path()
-    return qp.cost
+    pf = PathFinderBFS(cave, TARGET_X, TARGET_Y)
+    return pf.find_quickest_path()
+
+
+if __name__ == '__main__':
+    print(main())

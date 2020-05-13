@@ -162,3 +162,5 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - I think I should try that before taking a break
 - More aggressive culling slowed things down (see branch)
 - So now I should run overnight / on some other server and take a break or just take a break
+- This would take over six hours in the best of cases, and I don't want to run this machine that hot for that long
+- So unless/until I get a chance to move this to another box or think of a better strategy (either number-theory based or better culling), let's put a pin in it
