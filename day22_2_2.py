@@ -36,6 +36,9 @@ class PathState:
     def current_pos(self):
         return self.nodes[-1]
 
+    def manhattan(self, target):
+        return abs(self.current_x - target[0]) + abs(self.current_y - target[1])
+
     def get_next_pos(self, direction):
         assert self.nodes, 'Initialize nodes before trying to get next position'
         if direction == Direction.UP and self.current_y > 0:
@@ -119,13 +122,27 @@ class PathFinderBFS:
         reduced_paths = []
         reduced_paths_uniqueifed = set()
 
-        for path in self.paths:
-            if path.cost > self.shortest_known_path:
-                continue
+        paths_at_target = [p for p in self.paths if p.current_pos == self.target_position]
+        if paths_at_target:
+            # cull
+            fewest_ticks_remaining = min(pat.ticks_remaining for pat in paths_at_target)
+            for path in self.paths:
+                md = path.manhattan(self.target_position)
+                if md > fewest_ticks_remaining or (md == 0 and path.ticks_remaining > fewest_ticks_remaining):
+                    continue
+                else:
+                    if path.uniqueify() not in reduced_paths_uniqueifed:
+                        reduced_paths.append(path)
+                        reduced_paths_uniqueifed.add(path.uniqueify())
+        else:
+            # no culling possible
+            for path in self.paths:
+                if path.cost > self.shortest_known_path:
+                    continue
 
-            if path.uniqueify() not in reduced_paths_uniqueifed:
-                reduced_paths.append(path)
-                reduced_paths_uniqueifed.add(path.uniqueify())
+                if path.uniqueify() not in reduced_paths_uniqueifed:
+                    reduced_paths.append(path)
+                    reduced_paths_uniqueifed.add(path.uniqueify())
 
         self.paths = reduced_paths
 
@@ -152,20 +169,7 @@ class PathFinderBFS:
             self.paths = new_paths
             self.reduce_paths()
             solutions = self.extract_solutions()
-            self.shortest_known_path = (
-                min(s.cost for s in solutions)
-                if solutions
-                else self.shortest_known_path
-            )
 
-        # if any(
-        #     solution for solution in solutions if solution.equipment == Equipment.TORCH
-        # ):
-        #     final_change_cost = 0
-        # else:
-        #     final_change_cost = 7
-        #
-        # return ticks + final_change_cost
         return ticks
 
     def _calculate_baseline_path_cost(self, cave, initial_path=None):
