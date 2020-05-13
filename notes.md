@@ -155,4 +155,8 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
   - in `master` I calculated cost and did an exhaustive BFS
   - in `try-changing-over-ticks` I had paths wait seven ticks before moving if changing equipment and terminating condition was path arriving at destination with TORCH
   - in `now-try-culling` I'm going to try one more thing where, once any path reaches destination, regardless of equipment, we cull out anybody more than a manhattan distance of 7 away
-- 
+- Well culling went quite well
+- But I believe it's still too slow for the real problem
+- Though maybe consider the more aggressive culling where you find the closest one by manhattan distance with fewest ticks_remaining
+- and then cull anything further than that manhattan_distance*7 + ticks_remaining
+- I think I should try that before taking a break
