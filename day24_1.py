@@ -20,10 +20,11 @@ UNIT_PATT = re.compile(UNIT_LINE)
 
 
 class Group(object):
-    def __init__(self, unit, number, army):
+    def __init__(self, unit, number, army, group_number):
         self.unit = unit
         self.number = number
         self.army = army
+        self.group_number = group_number
         self.selected_attack_group = None
         self.selected_to_be_attacked = False
 
@@ -46,7 +47,12 @@ class Group(object):
 
         for group in groups:
             damage = self.calculate_damage(group)
-            logger.info(f'this group would deal defending group {damage} damage')
+            if not damage:
+                break
+            logger.info(
+                f'{self.army.name} group {self.group_number} would deal defending group {group.group_number}'
+                f' {damage} damage'
+            )
             if damage > highest_damage:
                 highest_damage = damage
                 group_to_attack = group
@@ -59,12 +65,12 @@ class Group(object):
         if not self.selected_attack_group:
             return
         damage = self.calculate_damage(self.selected_attack_group)
-        self.selected_attack_group.deal_damage(damage)
+        self.selected_attack_group.deal_damage(damage, self)
 
-    def deal_damage(self, amount):
+    def deal_damage(self, amount, attacking_group):
         units_to_lose = amount // self.unit.hp
         logger.info(
-            f'a group attacks this group, dealing {amount} damage and '
+            f'{attacking_group} attacks defending group {self.group_number}, '
             f'killing {min(units_to_lose, self.number)} units'
         )
         self.number = max(0, self.number - units_to_lose)
@@ -72,6 +78,9 @@ class Group(object):
     @property
     def initiative(self):
         return self.unit.initiative
+
+    def __repr__(self):
+        return f'{self.army.name} group {self.group_number}'
 
 
 class Unit(object):
@@ -93,16 +102,18 @@ class Unit(object):
 
 
 class Army(object):
-    def __init__(self):
+    def __init__(self, name='ArmyName'):
+        self.name = name
         self.groups = []
-
-    def select_groups_to_attack(self, opposing_army):
-        for group in self.groups:
-            group.select_group_to_attack(*opposing_army.groups)
 
     @property
     def has_units(self):
         return any(group.number > 0 for group in self.groups)
+
+    def reset_attack_selected(self):
+        for group in self.groups:
+            group.selected_attack_group = None
+            group.selected_to_be_attacked = False
 
 
 def parse_weak_immune(parenthetical):
@@ -140,22 +151,28 @@ def parse_input_24(filename):
         lines = f.readlines()
 
     armies = {}
+    group_num = 0
 
     for line in lines:
         match = UNIT_PATT.match(line.strip())
         if match:
+            group_num += 1
             hp = int(match.group('hit_points'))
             damage = int(match.group('damage_amount'))
             damage_type = match.group('damage_type')
             initiative = int(match.group('initiative'))
             weak, immune = parse_weak_immune(match.group('weak_immune'))
             unit = Unit(hp, damage, damage_type, initiative, weak, immune)
-            army.groups.append(Group(unit, int(match.group('num_units')), army))
+            army.groups.append(
+                Group(unit, int(match.group('num_units')), army, group_num)
+            )
         elif line.strip() == 'Immune System:':
-            army = Army()
+            group_num = 0
+            army = Army('Immune System')
             armies['immune_system'] = army
         elif line.strip() == 'Infection:':
-            army = Army()
+            group_num = 0
+            army = Army('Infection')
             armies['infection'] = army
         elif not line.strip():
             pass
@@ -178,6 +195,7 @@ def army_target_selection(army1, army2):
     sorted_groups = sorted(
         second_key_sorted, key=lambda x: x.effective_power, reverse=True
     )
+    logger.debug(f'{sorted_groups=}')
     for sg in sorted_groups:
         sg.select_group_to_attack(
             *[
@@ -189,6 +207,25 @@ def army_target_selection(army1, army2):
             ]
         )
 
+    logger.info('')
+
+
+def print_army(army):
+    if any(group.number for group in army.groups):
+        for i, group in enumerate(army.groups):
+            if group.number:
+                print(f'Group {i+1} contains {group.number} units')
+    else:
+        print('No groups remain.')
+
+
+def print_armies(armies):
+    print('Immune System:')
+    print_army(armies['immune_system'])
+    print('Infection:')
+    print_army(armies['infection'])
+    print()
+
 
 def day24_1(filename):
     armies = parse_input_24(filename)
@@ -196,20 +233,19 @@ def day24_1(filename):
     army_infection = armies['infection']
 
     while army_immune.has_units and army_infection.has_units:
-        # TODO: print status of battle
+        print_armies(armies)
         army_target_selection(army_immune, army_infection)
         army_attack(army_immune, army_infection)
-        for group in army_immune.groups + army_infection.groups:
-            group.selected_attack_group = None
-            group.selected_to_be_attacked = False
+        logger.info('')
+        army_immune.reset_attack_selected()
+        army_infection.reset_attack_selected()
 
     winning_army = [a for a in armies.values() if a.has_units][0]
     num_remaining_units = sum(g.number for g in winning_army.groups)
+    print_armies(armies)
     return num_remaining_units
 
 
 if __name__ == '__main__':
     print(f'answer: {day24_1("data/input24.txt")}')
-    # 9684 is too low
-    # my next best guess is something is wrong with my parsing or my sorting so let's look at everything that gets
-    # parsed first then maybe consider some tricky sorts
+    # 10290 is too low
