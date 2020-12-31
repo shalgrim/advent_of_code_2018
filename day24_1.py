@@ -227,10 +227,16 @@ def print_armies(armies):
     print()
 
 
-def day24_1(filename):
+def boost_army(army, boost):
+    for group in army.groups:
+        group.unit.damage_amount += boost
+
+
+def day24_1(filename, boost=0):
     armies = parse_input_24(filename)
     army_immune = armies['immune_system']
     army_infection = armies['infection']
+    boost_army(army_immune, boost)
 
     while army_immune.has_units and army_infection.has_units:
         print_armies(armies)
@@ -247,4 +253,4 @@ def day24_1(filename):
 
 
 if __name__ == '__main__':
-    print(f'answer: {day24_1("data/input24.txt")}')  # 10290 is too low
+    print(f'answer: {day24_1("data/input24.txt")}')
