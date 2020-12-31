@@ -47,8 +47,6 @@ class Group(object):
 
         for group in groups:
             damage = self.calculate_damage(group)
-            if not damage:
-                break
             logger.info(
                 f'{self.army.name} group {self.group_number} would deal defending group {group.group_number}'
                 f' {damage} damage'
@@ -190,7 +188,7 @@ def army_attack(army1, army2):
 
 
 def army_target_selection(army1, army2):
-    all_groups = army1.groups + army2.groups
+    all_groups = [g for g in army1.groups + army2.groups if g.number]
     second_key_sorted = sorted(all_groups, key=lambda x: x.initiative, reverse=True)
     sorted_groups = sorted(
         second_key_sorted, key=lambda x: x.effective_power, reverse=True
@@ -202,7 +200,6 @@ def army_target_selection(army1, army2):
                 g
                 for g in all_groups
                 if g.army is not sg.army
-                and g.number > 0
                 and not g.selected_to_be_attacked
             ]
         )
@@ -247,5 +244,4 @@ def day24_1(filename):
 
 
 if __name__ == '__main__':
-    print(f'answer: {day24_1("data/input24.txt")}')
-    # 10290 is too low
+    print(f'answer: {day24_1("data/input24.txt")}')  # 10290 is too low
