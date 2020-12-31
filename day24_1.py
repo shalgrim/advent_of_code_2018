@@ -49,9 +49,13 @@ class Group(object):
             damage = self.calculate_damage(group)
             logger.info(
                 f'{self.army.name} group {self.group_number} would deal defending group {group.group_number}'
-                f' {damage} damage'
+                f' {damage} damage (EP: {group.effective_power})'
             )
-            if damage > highest_damage:
+            if damage > highest_damage or (
+                damage
+                and damage == highest_damage
+                and group.effective_power > group_to_attack.effective_power
+            ):
                 highest_damage = damage
                 group_to_attack = group
 
@@ -199,8 +203,7 @@ def army_target_selection(army1, army2):
             *[
                 g
                 for g in all_groups
-                if g.army is not sg.army
-                and not g.selected_to_be_attacked
+                if g.army is not sg.army and not g.selected_to_be_attacked
             ]
         )
 
