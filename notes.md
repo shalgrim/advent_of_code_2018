@@ -76,7 +76,7 @@ Problem:
 - it goes right first, does some stuff, then assigns 7 as shortest for 10,11climb (but it should be 8)
 - fixed that bug and it _still_ breaks in the same place, coming back with an answer of 33 when it should be 14
 
-```py
+```
 problem:
 self.shortest_froms['(10, 11),Equipment.CLIMB']
 8
@@ -152,9 +152,9 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - So a guide:
   - `day22_2.py` is DFS
   - `day22_2_2.py` is BFS
-  - in `master` I calculated cost and did an exhaustive BFS
-  - in `try-changing-over-ticks` I had paths wait seven ticks before moving if changing equipment and terminating condition was path arriving at destination with TORCH
-  - in `now-try-culling` I'm going to try one more thing where, once any path reaches destination, regardless of equipment, we cull out anybody more than a manhattan distance of 7 away
+  - in the `master` branch I calculated cost and did an exhaustive BFS
+  - in the `try-changing-over-ticks` branch I had paths wait seven ticks before moving if changing equipment and terminating condition was path arriving at destination with TORCH
+  - in the `now-try-culling` branch I'm going to try one more thing where, once any path reaches destination, regardless of equipment, we cull out anybody more than a manhattan distance of 7 away
 - Well culling went quite well
 - But I believe it's still too slow for the real problem
 - Though maybe consider the more aggressive culling where you find the closest one by manhattan distance with fewest ticks_remaining
@@ -164,3 +164,50 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - So now I should run overnight / on some other server and take a break or just take a break
 - This would take over six hours in the best of cases, and I don't want to run this machine that hot for that long
 - So unless/until I get a chance to move this to another box or think of a better strategy (either number-theory based or better culling), let's put a pin in it
+- ...
+- trying to pick up much later, I can't figure out how I came to that six hour calculation or which is my fastest branch and file
+- because I would be willing to let this run overnight if I thought I could get a good answer
+- but I'm not sure where to pick up
+- running `test_day22.py` on the `master` branch sure is taking a while
+
+## Day 23
+
+### Part Two
+
+- Noticing that two of the four tests take 22s each
+- I think instead of counting all possible points up, the best approach is to find the midpoint(s) of two nanobots and then search from those for points that also intersect
+- Do that for all 100 choose 2 combinations of two
+- From there you can add one more nanobot at a time
+- Wait, it seems much more efficient to figure out if two spheres intersect period
+- And so let's figure out which sphere intersects with the most others...no, because they could intersect on different sides
+- So, yeah, the key is to find, given two spheres, points within both
+- From there it should be straightforward to add spheres
+- And then you still have a significant search space but I think it's manageable
+- Uff, even this seems to be taking too long, my number of points to explore just keeps increasing
+- okay that's not the right idea
+- I think the best solution is to figure out how to figure out if three+ spheres intersect
+  - I don't think the whole midpoint thing will work.
+  - Maybe the trick is that if each pair intersects then they must all three intersect (but that can't be true)
+  - Anyway, google that (how to determine if three (or more) spheres intersect) and go from there)
+  - That will give you sets of max sphere intersection, which _should_ reduce search space
+- but for the time being I'm more interested in digging into getting a single star on day 24
+
+## Day 24
+
+### Part One
+
+* My tests pass but the answer I get in the main problem is wrong
+* I've stared at the code looking for a bug long enough
+* I can't think of another solution than to take it step by step and hand-analyze what's supposed to happen until I find a problem
+* Looking at the way they detail the selection and attacking phase in the "output" (which I think I should emulate), it seems like the selection takes place one army at a time, which is not how I've implemented it
+* It shouldn't make a difference, but I do think detailing things like this should illuminate the problem
+* ...
+* One thing I keep re-calculating is that, during the attacking phase, if a group loses units in defending, then when its turn to attack in the same set of turns comes up it only attacks with those remaining units
+* ...
+* I think I'm getting too fancy with sorting and some mistake is creeping in there
+* I think what I need to do is, like their example:
+  * just calculate all the "would deal" damages for all group combinations where there are units on both sides
+  * Do the selection one army at a time (to make sorting easier)
+  * Do the attacking...  
+  * [grumble grumble I still think the code I wrote is correct]  
+    
