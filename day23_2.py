@@ -1,6 +1,7 @@
 import logging
 import sys
 from collections import Counter
+from itertools import combinations
 from logging import StreamHandler
 
 from day23_1 import parse_input23
@@ -52,5 +53,13 @@ def distance_to_position_in_range_of_most_nanobots(filename):
     return answer
 
 
+def get_parwise_intersecting_points(filename):
+    nanobots = parse_input23(filename)
+    for combo in combinations(nanobots, 2):
+        print(len(combo[0].common_points(combo[1])))
+
+
 if __name__ == '__main__':
+    get_parwise_intersecting_points('data/input23.txt')
+    print('lll')
     print(f'answer: {distance_to_position_in_range_of_most_nanobots("data/input23.txt")}')
