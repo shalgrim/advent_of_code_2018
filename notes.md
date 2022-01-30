@@ -160,3 +160,19 @@ self.shortest_froms['(10, 12),Equipment.CLIMB']
 - Though maybe consider the more aggressive culling where you find the closest one by manhattan distance with fewest ticks_remaining
 - and then cull anything further than that manhattan_distance*7 + ticks_remaining
 - I think I should try that before taking a break
+- All the tests in the culling branch took about 42 minutes and I exported the results [here](file:///Users/scotthalgrim/advent_of_code_2018/Test%20Results%20Day%2022%20-%20.html)
+- ...
+- kicked off `python day22_2.py` on the `now-try-culling` branch at 15:59 on 2022-01-29
+  - still running 16 hours later =(
+
+## Day 23
+
+### Part 2
+
+Note that these notes are not on the main branch, they're on a branch where I'm working on day 22
+
+It occurs to me that it should be easy for any two nanobots to figure out if they have any overlap.
+
+And it shouldn't be too hard to figure it out then for three, four, etc.
+
+So let's start by trying to find all combinations of two that have any overlap, then try to find all combinations of three that have any overlap, and so on
