@@ -95,15 +95,28 @@ class Region(object):
         return self.erosion_level % 3
 
 
-def build_cave(target_x, target_y, depth, extra_x=0, extra_y=0):
+# def build_cave(target_x, target_y, depth, extra_x=0, extra_y=0):
+#     cave = Cave(target_x, target_y, depth)
+#     max_y = target_y + extra_y + 1
+#     max_x = target_x + extra_x + 1
+#     max_size = max(max_y,  max_x)
+#
+#     for i in range(max_size):
+#         for x in range(min(i, max_x)):
+#             cave[(x, i)] = Region(x, i, cave)
+#         for y in range(min(i, max_y)):
+#             cave[(i, y)] = Region(i, y, cave)
+#         cave[(i, i)] = Region(i, i, cave)
+#     return cave
+
+
+def build_cave(target_x, target_y, depth):
     cave = Cave(target_x, target_y, depth)
-    max_size = max(target_x + extra_x, target_y + extra_y)
-    max_y = target_y + extra_y
-    max_x = target_x + extra_x
+    max_size = max(target_x, target_y)
     for i in range(max_size + 1):
-        for x in range(min(i, max_x)):
+        for x in range(i):
             cave[(x, i)] = Region(x, i, cave)
-        for y in range(min(i, max_y)):
+        for y in range(i):
             cave[(i, y)] = Region(i, y, cave)
         cave[(i, i)] = Region(i, i, cave)
     return cave
