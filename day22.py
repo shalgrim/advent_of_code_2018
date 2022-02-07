@@ -11,7 +11,7 @@ TARGET = 12, 757
 EXTRA_X = 0
 EXTRA_Y = 0
 
-# TODO: this builds a cave that is a square, which is probably a waste, so fix that
+# TODO: I modified this but it broke part 1 and tests of part 1 so fix that first
 cave = build_cave(TARGET[0], TARGET[1], DEPTH, EXTRA_X, EXTRA_Y)
 
 
