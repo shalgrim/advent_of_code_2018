@@ -96,6 +96,7 @@ class Region(object):
 
 
 # def build_cave(target_x, target_y, depth, extra_x=0, extra_y=0):
+#     """This build_cave was intended to narrow the cave but it broke test_part_one"""
 #     cave = Cave(target_x, target_y, depth)
 #     max_y = target_y + extra_y + 1
 #     max_x = target_x + extra_x + 1
@@ -111,6 +112,7 @@ class Region(object):
 
 
 def build_cave(target_x, target_y, depth):
+    """This build_cave works and TestDay22.test_part_one passes"""
     cave = Cave(target_x, target_y, depth)
     max_size = max(target_x, target_y)
     for i in range(max_size + 1):
