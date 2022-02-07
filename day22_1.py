@@ -21,9 +21,9 @@ class Equipment(Enum):
 
 
 POSSIBLE_EQUIPMENT = {
-    RegionType.ROCKY: set([Equipment.CLIMB, Equipment.TORCH]),
-    RegionType.WET: set([Equipment.CLIMB, Equipment.NO]),
-    RegionType.NARROW: set([Equipment.TORCH, Equipment.NO]),
+    RegionType.ROCKY: {Equipment.CLIMB, Equipment.TORCH},
+    RegionType.WET: {Equipment.CLIMB, Equipment.NO},
+    RegionType.NARROW: {Equipment.TORCH, Equipment.NO},
 }
 
 
