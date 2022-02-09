@@ -92,7 +92,7 @@ class Region(object):
 
     @property
     def tipe(self):
-        return self.erosion_level % 3
+        return RegionType(self.erosion_level % 3)
 
 
 def build_cave(target_x, target_y, depth, extra_x=0, extra_y=0):
@@ -100,7 +100,7 @@ def build_cave(target_x, target_y, depth, extra_x=0, extra_y=0):
     cave = Cave(target_x, target_y, depth)
     max_y = target_y + extra_y
     max_x = target_x + extra_x
-    max_size = max(max_y,  max_x)
+    max_size = max(max_y, max_x)
     print(f'{max_size=}')
 
     for i in range(max_size + 1):

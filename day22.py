@@ -7,12 +7,6 @@ from day22_1 import Cave, Region, build_cave, RegionType, Equipment, POSSIBLE_EQ
 DEPTH = 3198
 TARGET = 12, 757
 
-# toy with these if your answer is wrong...maybe going a bit wide and deep around will help
-EXTRA_X = 0
-EXTRA_Y = 0
-
-cave = build_cave(TARGET[0], TARGET[1], DEPTH, EXTRA_X, EXTRA_Y)
-
 
 class Node:
     def __init__(self, x, y, equipment, initial_distance):
@@ -49,7 +43,7 @@ def create_dijkstra_nodes(cave, target_x, target_y, extra_x, extra_y):
                 nodes[(x, y, Equipment.CLIMB)] = climb_node
                 torch_node.neighbors.append((climb_node, 7))
                 climb_node.neighbors.append((torch_node, 7))
-            elif region.type == RegionType.NARROW:
+            elif region.tipe == RegionType.NARROW:
                 torch_node = Node(x, y, Equipment.TORCH, math.inf)
                 nodes[(x, y, Equipment.TORCH)] = torch_node
                 no_node = Node(x, y, Equipment.NO, math.inf)
@@ -85,29 +79,40 @@ def create_dijkstra_nodes(cave, target_x, target_y, extra_x, extra_y):
     return nodes
 
 
-unvisited_nodes = create_dijkstra_nodes(cave, TARGET[0], TARGET[1], EXTRA_X, EXTRA_Y)
-current_node = unvisited_nodes[(0, 0, Equipment.TORCH)]
-current_node.distance = 0
-visited_nodes = {}
-target_key = (TARGET[0], TARGET[1], Equipment.TORCH)
+def find_shortest_path_dijkstra(unvisited_nodes, target_x, target_y):
+    current_node = unvisited_nodes[(0, 0, Equipment.TORCH)]
+    current_node.distance = 0
+    visited_nodes = {}
+    target_key = (target_x, target_y, Equipment.TORCH)
+    while unvisited_nodes and target_key in unvisited_nodes:
+        current_key = (current_node.x, current_node.y, current_node.equipment)
+        for neighbor, edge_distance in current_node.neighbors:
+            if neighbor.visited:
+                continue
+            neighbor.distance = min(
+                neighbor.distance, current_node.distance + edge_distance
+            )
 
-while unvisited_nodes and target_key not in unvisited_nodes:
-    current_key = (current_node.x, current_node.y, current_node.equipment)
-    for neighbor, edge_distance in current_node.neighbors:
-        if neighbor.visited:
-            continue
-        neighbor.distance = min(
-            neighbor.distance, current_node.distance + edge_distance
-        )
+        print(f'marking {current_key=} as visited')
+        current_node.visited = True
+        visited_nodes[current_key] = current_node
+        del unvisited_nodes[current_key]
+        if unvisited_nodes:
+            current_node = sorted(
+                list(unvisited_nodes.values()), key=lambda node: node.distance
+            )[0]
+        else:
+            current_node = None
+    return visited_nodes[target_key].distance
 
-    current_node.visited = True
-    visited_nodes[current_key] = current_node
-    del unvisited_nodes[current_key]
-    if unvisited_nodes:
-        current_node = sorted(
-            list(unvisited_nodes.values()), key=lambda node: node.distance
-        )[0]
-    else:
-        current_node = None
 
-print(visited_nodes[target_key].distance)
+# toy with these if your answer is wrong...maybe going a bit wide and deep around will help
+EXTRA_X = 50
+EXTRA_Y = 100
+
+if __name__ == '__main__':
+    cave = build_cave(TARGET[0], TARGET[1], DEPTH, EXTRA_X, EXTRA_Y)
+    unvisited_nodes = create_dijkstra_nodes(
+        cave, TARGET[0], TARGET[1], EXTRA_X, EXTRA_Y
+    )
+    print(find_shortest_path_dijkstra(unvisited_nodes, TARGET[0], TARGET[1]))

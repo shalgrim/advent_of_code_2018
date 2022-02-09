@@ -1,5 +1,6 @@
 from unittest import TestCase, skip
 
+from day22 import create_dijkstra_nodes, find_shortest_path_dijkstra
 from day22_1 import (
     CAVE_DEPTH,
     TARGET_X,
@@ -14,6 +15,8 @@ from day22_2_2 import PathFinderBFS
 TEST_TARGET_X = 10
 TEST_TARGET_Y = 10
 TEST_CAVE_DEPTH = 510
+EXTRA_X = 3
+EXTRA_Y = 3
 
 
 class TestDay22BFS(TestCase):
@@ -137,7 +140,9 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 18)
 
-    def test_part_two_base_case_12(self):  # 1m 47s vs 1m 27s counting ticks vs 3s with culling
+    def test_part_two_base_case_12(
+        self
+    ):  # 1m 47s vs 1m 27s counting ticks vs 3s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -148,7 +153,9 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 19)
 
-    def test_part_two_base_case_13(self):  # 2m 27s vs 2m 8s counting ticks vs 4s with culling
+    def test_part_two_base_case_13(
+        self
+    ):  # 2m 27s vs 2m 8s counting ticks vs 4s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -182,7 +189,9 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 22)
 
-    def test_part_two_base_case_16(self):  # 17m 26s...quite the big jump vs 18s with culling
+    def test_part_two_base_case_16(
+        self
+    ):  # 17m 26s...quite the big jump vs 18s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -193,7 +202,9 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 23)
 
-    def test_part_two_base_case_19(self):  # takes over 20 minutes in exhaustive BFS? ... 60s with culling
+    def test_part_two_base_case_19(
+        self
+    ):  # takes over 20 minutes in exhaustive BFS? ... 60s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -248,7 +259,9 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 43)
 
-    def test_part_two_base_case_23(self):  # 9m 3s with culling (one more tick added almost two minutes :sadface:)
+    def test_part_two_base_case_23(
+        self
+    ):  # 9m 3s with culling (one more tick added almost two minutes :sadface:)
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -343,3 +356,17 @@ class TestDay22(TestCase):
         self.assertEqual(pf.known_shortest_path, 45)
         # pf = PathFinder(self.actual_cave)
         # self.assertEqual(pf.find_quickest_path(TARGET_X, TARGET_Y), 0)  # don't have this answer yet
+
+
+class TestDay22Dijkstra(TestCase):
+    def setUp(self):
+        self.test_cave = build_cave(TEST_TARGET_X, TEST_TARGET_Y, TEST_CAVE_DEPTH)
+
+    def test_part_two(self):
+        unvisited_nodes = create_dijkstra_nodes(
+            self.test_cave, TEST_TARGET_X, TEST_TARGET_Y, EXTRA_X, EXTRA_Y
+        )
+        self.assertEqual(
+            find_shortest_path_dijkstra(unvisited_nodes, TEST_TARGET_X, TEST_TARGET_Y),
+            45,
+        )
