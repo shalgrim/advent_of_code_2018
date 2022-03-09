@@ -1,4 +1,5 @@
 import re
+from typing import List
 
 from tqdm import tqdm
 
@@ -34,7 +35,7 @@ class Nanobot(object):
         return reachables
 
 
-def parse_input23(filename):
+def parse_input23(filename) -> List[Nanobot]:
     with open(filename) as f:
         lines = f.readlines()
 

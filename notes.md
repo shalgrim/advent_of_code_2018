@@ -176,3 +176,42 @@ It occurs to me that it should be easy for any two nanobots to figure out if the
 And it shouldn't be too hard to figure it out then for three, four, etc.
 
 So let's start by trying to find all combinations of two that have any overlap, then try to find all combinations of three that have any overlap, and so on
+
+...
+
+[This](https://www.reddit.com/r/adventofcode/comments/rd4tah/2018_day_23_part_2_need_some_pointers/hnzfejt/?utm_source=reddit&utm_medium=web2x&context=3) is the thing I want to think about next
+
+I don't feel like that would necessarily get me to a global optimum, but if they say it does there's probably a proof somewhere.
+
+So then I guess the subproblems are:
+  - figuring out how to define a cube (I mean, I guess with eight points)
+  - figuring out how to determine how many bots' ranges overlap with that cube
+  - how to subdivide the cube then
+    - I guess find the "center" point (that's one subproblem)
+    - and then using that and the opposite corner you can calculate the remaining six points for each child
+ 
+^ That's a good list
+
+First, then, is figuring out how to define the initial cube from the input. You'll need the minmax for x, y, and z. That's six values...how do you go from that to eight points?
+
+1. (minx, maxy, maxz)
+2. (maxx, maxy, maxz)
+3. (minx, maxy, minz)
+4. (maxx, maxy, minz)
+5. (minx, miny, maxz)
+6. (maxx, miny, maxz)
+7. (minx, miny, minz)
+8. (maxx, miny, minz)
+
+Binary, duh
+
+Okay, next, how do you find the "center"? I guess take the average of each dimension
+
+And you should be able to determine if a cube is a point by checking if all eight points are the same
+
+So then the next thing is figuring out if cube is in the range of nanobot. I think this comes down to two subproblems as well:
+
+1. Finding the corner that is closest to the bot
+2. Figuring out if that corner is within the bot's range
+
+Okay, I think I have enough to go then
