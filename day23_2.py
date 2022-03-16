@@ -287,6 +287,10 @@ def octree_solver(nanobots):
         max_overlaps = 0
         for prism in prisms:
             num_overlaps = prism.count_overlaps(nanobots)
+
+            # as written a bug is I don't consider prisms with equal number of overlaps
+            # so it's a lazy search not guaranteed to find the optimal solution
+            # but it's fast
             if num_overlaps > max_overlaps:
                 max_overlaps = num_overlaps
                 the_prism = prism
