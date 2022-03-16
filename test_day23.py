@@ -20,4 +20,5 @@ class TestDay23(TestCase):
         self.assertEqual(distance_to_position_in_range_of_most_nanobots('data/test23_2.txt'), 36)
 
     def test_main_octree(self):
-        self.assertEqual(main_octree('data/test23_2.txt'), 36)
+        x, y, z, overlaps = main_octree('data/test23_2.txt')
+        self.assertEqual(abs(x) + abs(y) + abs(z), 36)

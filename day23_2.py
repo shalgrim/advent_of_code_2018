@@ -29,6 +29,9 @@ class Prism:
         self.minz = minz
         self.maxz = maxz
 
+    def __str__(self):
+        return f'Prism {self.center=}, width={self.maxx - self.minx}, height={self.maxy - self.miny}, depth={self.maxz - self.minz}'
+
     def split(self) -> List[Prism]:
         """splits the prism into eight prisms"""
         # start with special case
@@ -252,11 +255,6 @@ def distance_to_position_in_range_of_most_nanobots(filename):
     return answer
 
 
-def main_octree(filename):
-    nanobots = parse_input23(filename)
-    return octree_solver(nanobots)
-
-
 def find_center(nanobots):
     min_x = min(bot.x for bot in nanobots)
     min_y = min(bot.y for bot in nanobots)
@@ -279,6 +277,17 @@ def prism_from_nanobots(nanobots) -> Prism:
     )
 
 
+def main_octree(filename):
+    nanobots = parse_input23(filename)
+    best_prism = octree_solver(nanobots)
+    return (
+        best_prism.minx,
+        best_prism.miny,
+        best_prism.minz,
+        best_prism.count_overlaps(nanobots),
+    )
+
+
 def octree_solver(nanobots):
     the_prism = prism_from_nanobots(nanobots)
 
@@ -295,8 +304,12 @@ def octree_solver(nanobots):
                 max_overlaps = num_overlaps
                 the_prism = prism
 
-    return abs(the_prism.minx) + abs(the_prism.miny) + abs(the_prism.minz)
+    return the_prism
 
 
 if __name__ == '__main__':
-    print(f'answer: {main_octree("data/input23.txt")}')  # 71_406_282 is too low
+    x, y, z, overlaps = main_octree("data/input23.txt")
+    print(f'{overlaps=} at {x=}, {y=}, {z=}')
+    print(
+        f'answer: {abs(x) + abs(y) + abs(z)}'
+    )  # 71_406_282 is too low (comes from overlaps=856 at x=24211378, y=19620241, z=27574663)
