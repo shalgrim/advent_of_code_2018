@@ -32,6 +32,16 @@ class Prism:
     def __str__(self):
         return f'Prism {self.center=}, width={self.maxx - self.minx}, height={self.maxy - self.miny}, depth={self.maxz - self.minz}'
 
+    def __eq__(self, other):
+        return (
+            self.minx == other.minx
+            and self.maxx == other.maxx
+            and self.miny == other.miny
+            and self.maxy == other.maxy
+            and self.minz == other.minz
+            and self.maxz == other.maxz
+        )
+
     def split(self) -> List[Prism]:
         """splits the prism into eight prisms"""
         # start with special case
@@ -277,6 +287,44 @@ def prism_from_nanobots(nanobots) -> Prism:
     )
 
 
+class OctreeSolver:
+    """Uses DFS to maintain state to search"""
+
+    def __init__(self, nanobots, prism=None):
+        self.nanobots = nanobots
+        self.max_solution = 0
+        self.best_point_for_max_solution = None
+
+    def solve(self):
+        prism = prism_from_nanobots(self.nanobots)
+        self._solve(prism)
+        return self.max_solution, self.best_point_for_max_solution
+
+    def _solve(self, prism):
+        if prism.is_point:
+            point_overlaps = prism.count_overlaps(self.nanobots)
+            if point_overlaps > self.max_solution:
+                logger.info(f'best solution found so far: {point_overlaps}')
+                self.max_solution = point_overlaps
+                self.best_point_for_max_solution = prism.minx, prism.miny, prism.minz
+            elif point_overlaps and point_overlaps == self.max_solution:
+                if abs(prism.minx) + abs(prism.maxy) + abs(prism.minz) < abs(
+                    self.best_point_for_max_solution[0]
+                ) + abs(self.best_point_for_max_solution[1]) + abs(
+                    self.best_point_for_max_solution[2]
+                ):
+                    self.best_point_for_max_solution = (
+                        prism.minx,
+                        prism.miny,
+                        prism.minz,
+                    )
+        else:
+            octoprisms = prism.split()
+            for sub_prism in octoprisms:
+                if sub_prism.count_overlaps(self.nanobots) >= self.max_solution:
+                    self._solve(sub_prism)
+
+
 def main_octree(filename):
     nanobots = parse_input23(filename)
     best_prism = octree_solver(nanobots)
@@ -289,22 +337,31 @@ def main_octree(filename):
 
 
 def octree_solver(nanobots):
-    the_prism = prism_from_nanobots(nanobots)
+    prisms_under_consideration = [prism_from_nanobots(nanobots)]
+    max_overlaps = 0
 
-    while not the_prism.is_point:
-        prisms = the_prism.split()
+    while not all(prism.is_point for prism in prisms_under_consideration):
+        print(f'{len(prisms_under_consideration)=}, {max_overlaps=}')
+
         max_overlaps = 0
-        for prism in prisms:
-            num_overlaps = prism.count_overlaps(nanobots)
+        new_prisms_under_consideration = []
+        for prism in prisms_under_consideration:
+            prisms = prism.split()
+            for sub_prism in prisms:
+                num_overlaps = sub_prism.count_overlaps(nanobots)
+                if num_overlaps > max_overlaps:
+                    max_overlaps = num_overlaps
+                    new_prisms_under_consideration = [sub_prism]
+                elif num_overlaps and num_overlaps == max_overlaps:
+                    new_prisms_under_consideration.append(sub_prism)
 
-            # as written a bug is I don't consider prisms with equal number of overlaps
-            # so it's a lazy search not guaranteed to find the optimal solution
-            # but it's fast
-            if num_overlaps > max_overlaps:
-                max_overlaps = num_overlaps
-                the_prism = prism
+        prisms_under_consideration = new_prisms_under_consideration
 
-    return the_prism
+    final_prisms = sorted([
+        (abs(p.minx) + abs(p.miny) + abs(p.minz), p) for p in prisms_under_consideration
+    ])
+
+    return final_prisms[0][1]
 
 
 if __name__ == '__main__':
