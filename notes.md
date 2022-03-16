@@ -215,3 +215,16 @@ So then the next thing is figuring out if cube is in the range of nanobot. I thi
 2. Figuring out if that corner is within the bot's range
 
 Okay, I think I have enough to go then
+
+...
+
+I've tried BFS and DFS but both have some serious flaws that make it take forever.
+
+The problem with DFS is that spend a ton of time early on going down paths you have no business going down. Like, the first point is always the upper left corner, and there are just so many subprisms to go through before you get to a reasonable answer where you can start to go through fewer subprisms. This is bad enough in the test case where it takes 16 seconds to resolve, but in the actual problem it runs for a long time before even finding the first "best" solution...I haven't seen it get there yet.
+
+The problem with BFS is that you get ties and so have to consider lots of potential subprisms.
+
+I think a reasonable solution might be:
+  
+1. Get a baseline: do a dumb BFS where, in the case of a tie, you just pick the first one
+2. Do a DFS where you've already set the baseline
