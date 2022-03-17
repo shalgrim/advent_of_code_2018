@@ -223,9 +223,7 @@ class Prism:
         else:
             z = bot.z
 
-        closest_point = x, y, z
-
-        return manhattan_distance((bot.x, bot.y, bot.z), closest_point) <= bot.radius
+        return manhattan_distance((bot.x, bot.y, bot.z), (x, y, z)) <= bot.radius
 
 
 def manhattan_distance(p1, p2):
