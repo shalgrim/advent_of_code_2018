@@ -32,6 +32,16 @@ class Prism:
     def __str__(self):
         return f'Prism {self.center=}, width={self.maxx - self.minx}, height={self.maxy - self.miny}, depth={self.maxz - self.minz}'
 
+    def __hash__(self):
+        answer = ''
+        for dimension in [self.minx, self.maxx, self.miny, self.maxy, self.minz, self.maxz]:
+            if dimension >= 0:
+                answer += '0'
+            else:
+                answer += '1'
+            answer += str(abs(dimension))
+        return int(answer)
+
     def __eq__(self, other):
         return (
             self.minx == other.minx
@@ -353,7 +363,7 @@ def octree_solver(nanobots):
                 elif num_overlaps and num_overlaps == max_overlaps:
                     new_prisms_under_consideration.append(sub_prism)
 
-        prisms_under_consideration = new_prisms_under_consideration
+        prisms_under_consideration = set(new_prisms_under_consideration)
 
     final_prisms = sorted([
         (abs(p.minx) + abs(p.miny) + abs(p.minz), p) for p in prisms_under_consideration
