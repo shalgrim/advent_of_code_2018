@@ -228,3 +228,5 @@ I think a reasonable solution might be:
   
 1. Get a baseline: do a dumb BFS where, in the case of a tie, you just pick the first one
 2. Do a DFS where you've already set the baseline
+
+And on that front I know I've found one that gives me 856 overlaps, so I can do a DFS where I ignore anything less than that number...
