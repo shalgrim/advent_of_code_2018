@@ -13,6 +13,10 @@ class Nanobot(object):
         self.z = z
         self.radius = radius
 
+    def __str__(self):
+        return f'Nanobot {self.x=}, {self.y=}, {self.z=}, {self.radius=}'
+
+
     def manhattan_distance(self, other):
         return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
 
