@@ -230,3 +230,17 @@ I think a reasonable solution might be:
 2. Do a DFS where you've already set the baseline
 
 And on that front I know I've found one that gives me 856 overlaps, so I can do a DFS where I ignore anything less than that number...
+
+Wait a minute...what about a tie where, in the case of a tie, you choose the prism that is closest to the origin. Hm, that might be assailable.
+
+I also think, on the basis of the logging I added today, that running it overnight might give me an answer.
+
+Or, how about this, when you have a tie, you define your new prism as the minx, maxx, miny, etc. of all the prisms that are tied. That would work great, though I think there will be cases where that new prism will equal the existing prism, but maybe then and only then I could add those subprisms to the prisms under consideration.
+
+So right now my ideas are:
+
+1. DFS but seed it with us not being willing to consider prisms with a number of overlaps < 156 and a known starting point that is too low so we won't consider any prism where all points are closer to the origin than what we have there
+2. Run the BFS overnight
+3. BFS but instead of considering all subprisms in the case of a tie, turn that into a prism using the minx, maxx, miny, etc. available and only creating a list in the cases where that creates a prism that is equal in size to the original prism
+
+I think I can work on those in different branches, but I think first I need to clean things up in the repo/branches
