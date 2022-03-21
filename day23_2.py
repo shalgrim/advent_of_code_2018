@@ -1,4 +1,5 @@
 from __future__ import annotations
+import datetime
 import logging
 import sys
 from collections import Counter
@@ -349,7 +350,9 @@ def octree_solver(nanobots):
     max_overlaps = 0
 
     while not all(prism.is_point for prism in prisms_under_consideration):
+        print(f'=== {datetime.datetime.now()} ===')
         print(f'{len(prisms_under_consideration)=}, {max_overlaps=}')
+        print(list(prisms_under_consideration)[0], end='\n\n')
 
         max_overlaps = 0
         new_prisms_under_consideration = []
