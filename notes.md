@@ -243,4 +243,6 @@ So right now my ideas are:
 2. Run the BFS overnight
 3. BFS but instead of considering all subprisms in the case of a tie, turn that into a prism using the minx, maxx, miny, etc. available and only creating a list in the cases where that creates a prism that is equal in size to the original prism
 
-I'm cool doing those three in different branches, with `main` as is being a good candidate for #2. First I should maybe double check all my tests are still successful now that I've merged my branches and resolved conflicts
+I'm cool doing those three in different branches, with `main` as is being a good candidate for #2. First I should maybe double check all my tests are still successful now that I've merged my branches and resolved conflicts.
+
+Okay, so splitting into branches: day-23-opt-1-seeded-dfs, day23-opt-3-choose-subprism. main will be the opt 2 branch for now
