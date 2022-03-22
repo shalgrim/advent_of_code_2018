@@ -31,13 +31,13 @@ class TestDay23(TestCase):
             n1.common_points(Nanobot(0, 0, 0, 5)),
         )
 
-    # @skip  # good test but takes 22s
+    @skip  # good test but takes 22s
     def test_position_in_range_of_most_nanobots(self):
         self.assertEqual(
             position_in_range_of_most_nanobots('data/test23_2.txt'), (12, 12, 12)
         )
 
-    # @skip  # good test but takes 22s
+    @skip  # good test but takes 22s
     def test_distance_to_position_in_range_of_most_nanobots(self):
         self.assertEqual(distance_to_position_in_range_of_most_nanobots('data/test23_2.txt'), 36)
 
