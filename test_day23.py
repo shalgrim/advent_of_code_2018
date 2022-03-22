@@ -1,7 +1,11 @@
 from unittest import TestCase, skip
 
-from day23_1 import num_nanobots_within_range_of_strongest, Nanobot
-from day23_2 import position_in_range_of_most_nanobots, distance_to_position_in_range_of_most_nanobots, main_octree
+from day23_1 import Nanobot, num_nanobots_within_range_of_strongest
+from day23_2 import (
+    distance_to_position_in_range_of_most_nanobots,
+    main_octree,
+    position_in_range_of_most_nanobots,
+)
 
 
 class TestDay23(TestCase):
@@ -39,7 +43,9 @@ class TestDay23(TestCase):
 
     @skip  # good test but takes 22s
     def test_distance_to_position_in_range_of_most_nanobots(self):
-        self.assertEqual(distance_to_position_in_range_of_most_nanobots('data/test23_2.txt'), 36)
+        self.assertEqual(
+            distance_to_position_in_range_of_most_nanobots('data/test23_2.txt'), 36
+        )
 
     def test_main_octree(self):
         x, y, z, overlaps = main_octree('data/test23_2.txt')

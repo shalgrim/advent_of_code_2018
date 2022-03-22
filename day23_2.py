@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import datetime
 import logging
 import sys
@@ -7,7 +8,7 @@ from itertools import combinations
 from logging import StreamHandler
 from typing import List
 
-from day23_1 import parse_input23, Nanobot
+from day23_1 import Nanobot, parse_input23
 
 logger = logging.getLogger('advent_of_code.2018.day23_2')
 logging.basicConfig(
@@ -36,7 +37,14 @@ class Prism:
 
     def __hash__(self):
         answer = ''
-        for dimension in [self.minx, self.maxx, self.miny, self.maxy, self.minz, self.maxz]:
+        for dimension in [
+            self.minx,
+            self.maxx,
+            self.miny,
+            self.maxy,
+            self.minz,
+            self.maxz,
+        ]:
             if dimension >= 0:
                 answer += '0'
             else:
@@ -369,9 +377,12 @@ def octree_solver(nanobots):
 
         prisms_under_consideration = set(new_prisms_under_consideration)
 
-    final_prisms = sorted([
-        (abs(p.minx) + abs(p.miny) + abs(p.minz), p) for p in prisms_under_consideration
-    ])
+    final_prisms = sorted(
+        [
+            (abs(p.minx) + abs(p.miny) + abs(p.minz), p)
+            for p in prisms_under_consideration
+        ]
+    )
 
     return final_prisms[0][1]
 
