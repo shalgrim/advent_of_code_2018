@@ -275,18 +275,6 @@ def distance_to_position_in_range_of_most_nanobots(filename):
     return answer
 
 
-<<<<<<< HEAD
-def get_parwise_intersecting_points(filename):
-    nanobots = parse_input23(filename)
-    for combo in combinations(nanobots, 2):
-        print(len(combo[0].common_points(combo[1])))
-
-
-if __name__ == '__main__':
-    get_parwise_intersecting_points('data/input23.txt')
-    print('lll')
-    print(f'answer: {distance_to_position_in_range_of_most_nanobots("data/input23.txt")}')
-=======
 def find_center(nanobots):
     min_x = min(bot.x for bot in nanobots)
     min_y = min(bot.y for bot in nanobots)
@@ -394,4 +382,3 @@ if __name__ == '__main__':
     print(
         f'answer: {abs(x) + abs(y) + abs(z)}'
     )  # 71_406_282 is too low (comes from overlaps=856 at x=24211378, y=19620241, z=27574663)
->>>>>>> now-try-culling
