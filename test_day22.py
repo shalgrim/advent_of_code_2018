@@ -140,9 +140,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 18)
 
-    def test_part_two_base_case_12(
-        self
-    ):  # 1m 47s vs 1m 27s counting ticks vs 3s with culling
+    def test_part_two_base_case_12(self):  # 1m 47s vs 1m 27s counting ticks vs 3s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -153,9 +151,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 19)
 
-    def test_part_two_base_case_13(
-        self
-    ):  # 2m 27s vs 2m 8s counting ticks vs 4s with culling
+    def test_part_two_base_case_13(self):  # 2m 27s vs 2m 8s counting ticks vs 4s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -189,9 +185,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 22)
 
-    def test_part_two_base_case_16(
-        self
-    ):  # 17m 26s...quite the big jump vs 18s with culling
+    def test_part_two_base_case_16(self):  # 17m 26s...quite the big jump vs 18s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -202,9 +196,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 23)
 
-    def test_part_two_base_case_19(
-        self
-    ):  # takes over 20 minutes in exhaustive BFS? ... 60s with culling
+    def test_part_two_base_case_19(self):  # takes over 20 minutes in exhaustive BFS? ... 60s with culling
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,
@@ -259,9 +251,7 @@ class TestDay22BFS(TestCase):
         )
         self.assertEqual(pf.find_quickest_path(), 43)
 
-    def test_part_two_base_case_23(
-        self
-    ):  # 9m 3s with culling (one more tick added almost two minutes :sadface:)
+    def test_part_two_base_case_23(self):  # 9m 3s with culling (one more tick added almost two minutes :sadface:)
         pf = PathFinderBFS(
             self.test_cave,
             TEST_TARGET_X,

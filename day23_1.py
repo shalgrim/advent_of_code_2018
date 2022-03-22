@@ -1,5 +1,6 @@
 import itertools
 import re
+from typing import List
 
 from tqdm import tqdm
 
@@ -16,6 +17,9 @@ class Nanobot(object):
     def contains(self, x, y, z):
         """True if x, y, z falls within this nanobot's range"""
         return abs(self.x - x) + abs(self.y - y) + abs(self.z - z) <= self.radius
+
+    def __str__(self):
+        return f'Nanobot {self.x=}, {self.y=}, {self.z=}, {self.radius=}'
 
     def manhattan_distance(self, other):
         return abs(self.x - other.x) + abs(self.y - other.y) + abs(self.z - other.z)
@@ -92,7 +96,7 @@ class Nanobot(object):
         return reachables
 
 
-def parse_input23(filename):
+def parse_input23(filename) -> List[Nanobot]:
     with open(filename) as f:
         lines = f.readlines()
 
