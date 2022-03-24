@@ -4,7 +4,6 @@ import datetime
 import logging
 import sys
 from collections import Counter
-from itertools import combinations
 from logging import StreamHandler
 from typing import List
 
