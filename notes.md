@@ -246,3 +246,5 @@ So right now my ideas are:
 I'm cool doing those three in different branches, with `main` as is being a good candidate for #2. First I should maybe double check all my tests are still successful now that I've merged my branches and resolved conflicts.
 
 Okay, so splitting into branches: day-23-opt-1-seeded-dfs, day23-opt-3-choose-subprism. main will be the opt 2 branch for now
+
+The current situation with option 1 seems to be that I have everything except the "too close" bit coded up
