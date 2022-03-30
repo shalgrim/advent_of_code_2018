@@ -18,7 +18,7 @@ class DFSSolver:
             return
 
         if prism.is_point:
-            if overlaps  > self.max_overlaps_found:
+            if overlaps > self.max_overlaps_found:
                 self.max_overlaps_found = overlaps
                 self.best_point = prism.minx, prism.miny, prism.minz
                 print('===')
