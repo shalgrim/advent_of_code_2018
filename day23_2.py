@@ -19,6 +19,10 @@ logging.basicConfig(
 logger.addHandler(StreamHandler(sys.stdout))
 
 
+def distance_to_origin(point):
+    return sum(abs(dim) for dim in point)
+
+
 class Prism:
     """Represents a rectangular prism of eight points"""
 

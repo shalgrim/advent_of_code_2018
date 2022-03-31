@@ -1,9 +1,5 @@
 from day23_1 import parse_input23
-from day23_2 import Prism, prism_from_nanobots
-
-
-def distance_to_origin(point):
-    return sum(abs(dim) for dim in point)
+from day23_2 import Prism, distance_to_origin, prism_from_nanobots
 
 
 class DFSSolver:
