@@ -6,6 +6,7 @@ from day23_2 import (
     main_octree,
     position_in_range_of_most_nanobots,
 )
+from day23_2_dfs import seeded_dfs_main
 
 
 class TestDay23(TestCase):
@@ -50,3 +51,13 @@ class TestDay23(TestCase):
     def test_main_octree(self):
         x, y, z, overlaps = main_octree('data/test23_2.txt')
         self.assertEqual(abs(x) + abs(y) + abs(z), 36)
+
+    def test_dfs(self):
+        (x, y, z), overlaps = seeded_dfs_main('data/test23_2.txt', 4)
+        self.assertEqual(abs(x)+abs(y)+abs(z), 36)
+        (x, y, z), overlaps = seeded_dfs_main('data/test23_2.txt', 5)
+        self.assertEqual(abs(x)+abs(y)+abs(z), 36)
+
+    def test_dfs_long(self):  # takes like ten seconds
+        (x, y, z), overlaps = seeded_dfs_main('data/test23_2.txt')
+        self.assertEqual(abs(x)+abs(y)+abs(z), 36)

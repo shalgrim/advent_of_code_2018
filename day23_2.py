@@ -4,7 +4,6 @@ import datetime
 import logging
 import sys
 from collections import Counter
-from itertools import combinations
 from logging import StreamHandler
 from typing import List
 
@@ -18,6 +17,10 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S',
 )
 logger.addHandler(StreamHandler(sys.stdout))
+
+
+def distance_to_origin(point):
+    return sum(abs(dim) for dim in point)
 
 
 class Prism:
@@ -216,6 +219,16 @@ class Prism:
         return (
             self.minx == self.maxx and self.miny == self.maxy and self.minz == self.minz
         )
+
+    @property
+    def point_closest_to_origin(self):
+        # TODO: write this property and consider cases where min and max straddle 0...then closest for that dim is obv 0
+        raise NotImplementedError
+
+    @property
+    def point_farthest_from_origin(self):
+        # TODO: write this property
+        raise NotImplementedError
 
     def count_overlaps(self, nanobots):
         return sum(1 for bot in nanobots if self.overlaps(bot))
