@@ -16,6 +16,7 @@ class DFSSolver:
         prism = incoming_prism if incoming_prism else prism_from_nanobots(self.nanobots)
         if (overlaps := prism.count_overlaps(self.nanobots)) < self.max_overlaps_found:
             return
+        # TODO: add elif clause where if overlaps is equal and the entire prism is further than best point, we ignore
 
         if prism.is_point:
             if overlaps > self.max_overlaps_found:

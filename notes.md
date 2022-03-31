@@ -239,7 +239,7 @@ Or, how about this, when you have a tie, you define your new prism as the minx, 
 
 So right now my ideas are:
 
-1. DFS but seed it with us not being willing to consider prisms with a number of overlaps < 156 and a known starting point that is too low so we won't consider any prism where all points are closer to the origin than what we have there
+1. DFS but seed it with us not being willing to consider prisms with a number of overlaps < 156 and a known starting point that is too low so we won't consider any prism where all points are closer to the origin than what we have there. I should also consider a too far seed, where I know that if num_overlaps == best known overlaps and everything in the prism is further than the best known point for that number of overlaps, then I can ignore
 2. Run the BFS overnight
 3. BFS but instead of considering all subprisms in the case of a tie, turn that into a prism using the minx, maxx, miny, etc. available and only creating a list in the cases where that creates a prism that is equal in size to the original prism
 
