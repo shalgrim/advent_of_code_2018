@@ -23,16 +23,24 @@ class DFSSolver:
                 self.max_overlaps_found = overlaps
                 self.best_point = prism.minx, prism.miny, prism.minz
                 print('===')
-                print(f'more overlaps found with {self.max_overlaps_found=} at {self.best_point=}', end='\n\n')
+                print(
+                    f'more overlaps found with {self.max_overlaps_found=} at {self.best_point=}',
+                    end='\n\n',
+                )
             elif overlaps == self.max_overlaps_found:
                 prism_point = prism.minx, prism.miny, prism.minz
                 if self.best_point is None:
                     self.best_point = prism_point
                 else:
-                    if distance_to_origin(prism_point) < distance_to_origin(self.best_point):
+                    if distance_to_origin(prism_point) < distance_to_origin(
+                        self.best_point
+                    ):
                         self.best_point = prism_point
                         print('===')
-                        print(f'found new best point with {self.max_overlaps_found=} at {self.best_point=}', end='\n\n')
+                        print(
+                            f'found new best point with {self.max_overlaps_found=} at {self.best_point=}',
+                            end='\n\n',
+                        )
             else:
                 return
         else:
