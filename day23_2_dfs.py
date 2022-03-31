@@ -38,7 +38,7 @@ class DFSSolver:
                         self.best_point = prism_point
                         print('===')
                         print(
-                            f'found new best point with {self.max_overlaps_found=} at {self.best_point=}',
+                            f'found new best point with {self.max_overlaps_found=} at {self.best_point}, {distance_to_origin(self.best_point)} from origin',
                             end='\n\n',
                         )
             else:
