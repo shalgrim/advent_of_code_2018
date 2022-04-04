@@ -8,11 +8,21 @@ class DFSSolver:
         self.max_overlaps_found = overlap_seed
         self.best_point = None
 
+    def prism_further_than_best_point(self, prism: Prism):
+        return distance_to_origin(self.best_point) < distance_to_origin(
+            prism.point_closest_to_origin
+        )
+
     def solve(self, incoming_prism=None):
         prism = incoming_prism if incoming_prism else prism_from_nanobots(self.nanobots)
         if (overlaps := prism.count_overlaps(self.nanobots)) < self.max_overlaps_found:
             return
-        # TODO: add elif clause where if overlaps is equal and the entire prism is further than best point, we ignore
+        elif (
+            overlaps == self.max_overlaps_found
+            and self.best_point
+            and self.prism_further_than_best_point(prism)
+        ):
+            return
 
         if prism.is_point:
             if overlaps > self.max_overlaps_found:
@@ -54,5 +64,5 @@ def seeded_dfs_main(filename, overlap_seed=0, too_close_point_seed=(0, 0, 0)):
 
 
 if __name__ == '__main__':
-    (x, y, z), overlaps = seeded_dfs_main('data/input23.txt', 893)
+    (x, y, z), overlaps = seeded_dfs_main('data/input23.txt', 950)
     print(x, y, z, overlaps)

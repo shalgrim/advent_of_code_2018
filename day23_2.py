@@ -222,8 +222,18 @@ class Prism:
 
     @property
     def point_closest_to_origin(self):
-        # TODO: write this property and consider cases where min and max straddle 0...then closest for that dim is obv 0
-        raise NotImplementedError
+        def dimension_comparison(smaller, bigger):
+            if smaller < 0 and bigger > 0:
+                return 0
+            if abs(smaller) < abs(bigger):
+                return smaller
+            return bigger
+
+        x = dimension_comparison(self.minx, self.maxx)
+        y = dimension_comparison(self.miny, self.maxy)
+        z = dimension_comparison(self.minz, self.maxz)
+
+        return x, y, z
 
     @property
     def point_farthest_from_origin(self):
