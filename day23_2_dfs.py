@@ -64,5 +64,5 @@ def seeded_dfs_main(filename, overlap_seed=0, too_close_point_seed=(0, 0, 0)):
 
 
 if __name__ == '__main__':
-    (x, y, z), overlaps = seeded_dfs_main('data/input23.txt', 893)
+    (x, y, z), overlaps = seeded_dfs_main('data/input23.txt', 950)
     print(x, y, z, overlaps)

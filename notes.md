@@ -247,8 +247,9 @@ I'm cool doing those three in different branches, with `main` as is being a good
 
 Okay, so splitting into branches: day-23-opt-1-seeded-dfs, day23-opt-3-choose-subprism. main will be the opt 2 branch for now
 
-The current situation with option 1 is that I hvae coded up the "don't consider prisms with equal to best overlaps that are further than best point from origin" part coded up, so that's just about everything except the "too close" bit for a known too low answer that I gave
-
 And I know that:
-  - there is at least a point with 893 overlaps (so there had to be a bug where I came up with that 856 overlaps as the answer)
+  - there many points with 897 overlaps (so there had to be a bug where I came up with that 856 overlaps as the answer)
+    - I have found them as close as 78,214,340 from origin (and going down)
   - 71_406_282 is too low of an answer and came from overlaps=856 at x=24211378, y=19620241, z=27574663
+  
+The current situation with option 1 is that I hvae coded up the "don't consider prisms with equal to best overlaps that are further than best point from origin" part coded up, so that's just about everything except the "too close" bit for a known too low answer that I gave
