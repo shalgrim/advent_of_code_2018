@@ -239,7 +239,7 @@ Or, how about this, when you have a tie, you define your new prism as the minx, 
 
 So right now my ideas are:
 
-1. DFS but seed it with us not being willing to consider prisms with a number of overlaps < 156 and a known starting point that is too low so we won't consider any prism where all points are closer to the origin than what we have there. I should also consider a too far seed, where I know that if num_overlaps == best known overlaps and everything in the prism is further than the best known point for that number of overlaps, then I can ignore
+1. DFS but seed it with us not being willing to consider prisms with a number of overlaps < 856 and a known starting point that is too low so we won't consider any prism where all points are closer to the origin than what we have there. I should also consider a too far seed, where I know that if num_overlaps == best known overlaps and everything in the prism is further than the best known point for that number of overlaps, then I can ignore
 2. Run the BFS overnight
 3. BFS but instead of considering all subprisms in the case of a tie, turn that into a prism using the minx, maxx, miny, etc. available and only creating a list in the cases where that creates a prism that is equal in size to the original prism
 
@@ -247,7 +247,7 @@ I'm cool doing those three in different branches, with `main` as is being a good
 
 Okay, so splitting into branches: day-23-opt-1-seeded-dfs, day23-opt-3-choose-subprism. main will be the opt 2 branch for now
 
-The current situation with option 1 seems to be that I have everything except the "too close" bit coded up
+The current situation with option 1 is that I hvae coded up the "don't consider prisms with equal to best overlaps that are further than best point from origin" part coded up, so that's just about everything except the "too close" bit for a known too low answer that I gave
 
 And I know that:
   - there is at least a point with 893 overlaps (so there had to be a bug where I came up with that 856 overlaps as the answer)

@@ -36,13 +36,13 @@ class TestDay23(TestCase):
             n1.common_points(Nanobot(0, 0, 0, 5)),
         )
 
-    @skip  # good test but takes 22s
+    @skip  # good test but takes 16s
     def test_position_in_range_of_most_nanobots(self):
         self.assertEqual(
             position_in_range_of_most_nanobots('data/test23_2.txt'), (12, 12, 12)
         )
 
-    @skip  # good test but takes 22s
+    @skip  # good test but takes 18s
     def test_distance_to_position_in_range_of_most_nanobots(self):
         self.assertEqual(
             distance_to_position_in_range_of_most_nanobots('data/test23_2.txt'), 36
@@ -58,6 +58,6 @@ class TestDay23(TestCase):
         (x, y, z), overlaps = seeded_dfs_main('data/test23_2.txt', 5)
         self.assertEqual(abs(x)+abs(y)+abs(z), 36)
 
-    def test_dfs_long(self):  # takes like ten seconds
+    def test_dfs_long(self):  # takes like ten seconds...now takes < 100 ms
         (x, y, z), overlaps = seeded_dfs_main('data/test23_2.txt')
         self.assertEqual(abs(x)+abs(y)+abs(z), 36)
